@@ -26,7 +26,7 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflar el diseño del fragmento
-        val view = inflater.inflate(R.layout.fragment_profileMenu, container, false)
+        val view = inflater.inflate(R.layout.fragment_profile_menu, container, false)
 
         // Inicializar vistas
         imgProfile = view.findViewById(R.id.imgProfile)
