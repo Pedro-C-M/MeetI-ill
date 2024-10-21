@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Username: @usuario"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:layout_marginTop="25dp"
                 android:layout_marginBottom="8dp"/>
 
@@ -62,14 +62,14 @@
         android:layout_marginTop="25dp"
         android:layout_marginBottom="16dp"
         android:text="Nombre real: Juan Pérez"
-        android:textSize="18sp" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/tvPathologyLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Patologías:"
-        android:textSize="18sp"/>
+        android:textSize="20sp"/>
 
     <!-- Spinner para patologías, podremos seleccionar hasta 3 -->
     <LinearLayout
@@ -79,25 +79,29 @@
         android:layout_marginTop="5dp"
         android:paddingStart="16dp">
 
-        <!-- Primer Spinner -->
-        <Spinner
-            android:id="@+id/spnPatologias1"
+        <TextView
+            android:id="@+id/tvNombrePatologia1"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="5dp" />
+            android:layout_height="wrap_content"
+            android:text="Patologías 1..."
+            android:layout_marginTop="5dp"
+            android:textSize="18sp"/>
 
-        <!-- Segundo Spinner -->
-        <Spinner
-            android:id="@+id/spnPatologias2"
+        <TextView
+            android:id="@+id/tvNombrePatologia2"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="5dp"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Patologías 1..."
+            android:textSize="18sp"/>
 
-        <!-- Tercer Spinner -->
-        <Spinner
-            android:id="@+id/spnPatologias3"
+        <TextView
+            android:id="@+id/tvNombrePatologia3"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="5dp"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Patologías 1..."
+            android:textSize="18sp"/>
+
     </LinearLayout>
 </LinearLayout>
