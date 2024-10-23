@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navegacion"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/chatFragment">
 
     <fragment
         android:id="@+id/homeFragment"
@@ -19,4 +19,9 @@
         android:name="com.example.meet_ill.TestFragment"
         android:label="fragment_test"
         tools:layout="@layout/fragment_test" />
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.meet_ill.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
 </navigation>
