@@ -1,6 +1,5 @@
 package com.example.meet_ill
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
