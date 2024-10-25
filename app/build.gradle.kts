@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+
+    alias(libs.plugins.googleServices)
+    alias(libs.plugins.crashlytics)
 }
 
 android {
@@ -36,6 +39,13 @@ android {
 }
 
 dependencies {
+// Import the Firebase BoM
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
+    // Para la auth de firebase
+    implementation(libs.firebase.auth)
+    //Para la bd
+    implementation(libs.firebase.firestore)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
