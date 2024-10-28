@@ -1,5 +1,5 @@
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -8,7 +8,13 @@
     tools:context=".MainActivity">
 
     <!--Si hacemos elementos personalizados en layout meterlos aqui-->
-    <include layout="@layout/custom_toolbar" />
+    <include
+        android:id="@+id/customBar"
+        layout="@layout/custom_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <!--  ESTO PARA SI EN ALGUN MOMENTO PONEMOS LA NAVEGACION O ALGO
 
@@ -22,18 +28,17 @@
 
         app:menu="@menu/menu_navegacion"
         />
-
+-->
     <fragment
         android:id="@+id/fragmentContainer"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@+id/navBar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/customBar"
         app:navGraph="@navigation/navegacion" />
-       -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

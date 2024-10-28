@@ -3,42 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navegacion"
-    app:startDestination="@id/profileFragment">
-
-
-    <fragment
-        android:id="@+id/profileEditFragment"
-        android:name="com.example.meet_ill.ProfileEditFragment"
-        android:label="fragment_saludo"
-        tools:layout="@layout/fragment_edit_profile" >
-
-        <action
-            android:id="@+id/action_profileEditFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
-        <argument
-            android:name="usuario"
-            app:argType="com.example.meet_ill.Usuario" />
-    </fragment>
+    app:startDestination="@id/homeFragment">
 
     <fragment
-        android:id="@+id/profileFragment"
-        android:name="com.example.meet_ill.ProfileFragment"
-        android:label="fragment_saludo"
-        tools:layout="@layout/fragment_profile_menu" >
-
+        android:id="@+id/homeFragment"
+        android:name="com.example.meet_ill.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/action_profileFragment_to_profileEditFragment"
-            app:destination="@id/profileEditFragment" />
-        <argument
-            android:name="usuario"
-            app:argType="com.example.meet_ill.Usuario" />
+            android:id="@+id/action_homeFragment_to_testFragment"
+            app:destination="@id/testFragment" />
     </fragment>
-
-    <activity
-        android:id="@+id/mainActivity"
-        android:name="com.example.meet_ill.MainActivity"
-        android:label="activity_main"
-        tools:layout="@layout/activity_main"
-        />
-
+    <fragment
+        android:id="@+id/testFragment"
+        android:name="com.example.meet_ill.TestFragment"
+        android:label="fragment_test"
+        tools:layout="@layout/fragment_test" />
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.meet_ill.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
 </navigation>

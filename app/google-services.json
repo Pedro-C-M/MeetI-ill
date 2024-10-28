@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "390866584925",
+    "project_id": "meet-ill",
+    "storage_bucket": "meet-ill.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:390866584925:android:e978cf9cdc343fa155d4b4",
+        "android_client_info": {
+          "package_name": "com.example.meet_ill"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCos0BLYKxFjQqoAHme-8fDianlSMctsjU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
