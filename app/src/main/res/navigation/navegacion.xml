@@ -19,4 +19,24 @@
         android:name="com.example.meet_ill.TestFragment"
         android:label="fragment_test"
         tools:layout="@layout/fragment_test" />
+    <fragment
+        android:id="@+id/profileEditFragment"
+        android:name="com.example.meet_ill.ProfileEditFragment"
+        android:label="fragment_saludo"
+        tools:layout="@layout/fragment_edit_profile" >
+        <action
+            android:id="@+id/action_profileEditFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.meet_ill.ProfileFragment"
+        android:label="fragment_saludo"
+        tools:layout="@layout/fragment_profile_menu" >
+        <action
+            android:id="@+id/action_ProfileEditFragment_to_saludoFragment"
+            app:destination="@id/profileEditFragment" />
+    </fragment>
+
 </navigation>
