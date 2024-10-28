@@ -6,10 +6,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 
 class ProfileEditFragment : Fragment()  {
     private lateinit var imgProfile: ImageView
@@ -19,6 +20,8 @@ class ProfileEditFragment : Fragment()  {
     private lateinit var spnPatologia2: Spinner
     private lateinit var spnPatologia3: Spinner
     private lateinit var btnSave: Button
+
+    private val argumentos : ProfileEditFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,6 +41,19 @@ class ProfileEditFragment : Fragment()  {
 
 
         return view
+    }
+    override fun onStart() {
+        super.onStart()
+
+        btnSave.isEnabled = true
+        btnSave.setOnClickListener {
+            btnSave.setOnClickListener {
+
+                val destino = ProfileEditFragmentDirections.actionProfileEditFragmentToProfileFragment()
+                findNavController().navigate(destino)
+            }
+
+        }
     }
 
 }

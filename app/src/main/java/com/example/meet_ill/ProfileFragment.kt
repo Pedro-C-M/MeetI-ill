@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Button
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 
 class ProfileFragment : Fragment() {
 
@@ -18,6 +20,8 @@ class ProfileFragment : Fragment() {
     private lateinit var tvPatologia2: TextView
     private lateinit var tvPatologia3: TextView
     private lateinit var btnEditUser: Button
+
+    private val argumentos : ProfileFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,5 +40,19 @@ class ProfileFragment : Fragment() {
         btnEditUser = view.findViewById(R.id.btnEditUser)
 
         return view
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        btnEditUser.isEnabled = true
+        btnEditUser.setOnClickListener {
+            btnEditUser.setOnClickListener {
+
+                val destino = ProfileFragmentDirections.actionProfileFragmentToProfileEditFragment()
+                findNavController().navigate(destino)
+            }
+
+        }
     }
 }
