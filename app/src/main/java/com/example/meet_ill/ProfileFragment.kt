@@ -39,6 +39,14 @@ class ProfileFragment : Fragment() {
         tvPatologia3 = view.findViewById(R.id.tvNombrePatologia3)
         btnEditUser = view.findViewById(R.id.btnEditUser)
 
+        //Saco los valores del usuario....
+        tvUsername.text=argumentos.usuario.nombreUsuario
+        tvRealName.text=argumentos.usuario.nombreReal
+        tvPatologia1.text=argumentos.usuario.patologia1
+        tvPatologia2.text=argumentos.usuario.patologia2
+        tvPatologia3.text=argumentos.usuario.patologia3
+        //imgProfile
+
         return view
     }
 
@@ -49,7 +57,7 @@ class ProfileFragment : Fragment() {
         btnEditUser.setOnClickListener {
             btnEditUser.setOnClickListener {
 
-                val destino = ProfileFragmentDirections.actionProfileFragmentToProfileEditFragment()
+                val destino = ProfileFragmentDirections.actionProfileFragmentToProfileEditFragment(argumentos.usuario)
                 findNavController().navigate(destino)
             }
 

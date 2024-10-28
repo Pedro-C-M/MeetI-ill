@@ -39,7 +39,6 @@ class ProfileEditFragment : Fragment()  {
         spnPatologia3 = view.findViewById(R.id.spnPatologia3)
         btnSave = view.findViewById(R.id.btnSave)
 
-
         return view
     }
     override fun onStart() {
@@ -49,7 +48,14 @@ class ProfileEditFragment : Fragment()  {
         btnSave.setOnClickListener {
             btnSave.setOnClickListener {
 
-                val destino = ProfileEditFragmentDirections.actionProfileEditFragmentToProfileFragment()
+                argumentos.usuario.nombreUsuario=etUsername.text.toString()
+                argumentos.usuario.nombreReal=etRealName.text.toString()
+                argumentos.usuario.patologia1=spnPatologia1.selectedItem.toString()
+                argumentos.usuario.patologia2=spnPatologia2.selectedItem.toString()
+                argumentos.usuario.patologia3=spnPatologia3.selectedItem.toString()
+                //argumentos.usuario.
+
+                val destino = ProfileEditFragmentDirections.actionProfileEditFragmentToProfileFragment(argumentos.usuario)
                 findNavController().navigate(destino)
             }
 

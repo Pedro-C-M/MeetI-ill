@@ -19,25 +19,20 @@
         android:name="com.example.meet_ill.TestFragment"
         android:label="fragment_test"
         tools:layout="@layout/fragment_test" />
+
+
     <fragment
         android:id="@+id/profileEditFragment"
         android:name="com.example.meet_ill.ProfileEditFragment"
         android:label="fragment_saludo"
         tools:layout="@layout/fragment_edit_profile" >
-        <argument
-            android:name="username"
-            app:argType="string" />
-        <argument
-            android:name="realName"
-            app:argType="string" />
-        <argument
-            android:name="profilePic" />
-        <argument
-            android:name="patologias"
-            app:argType="string[]" />
+
         <action
             android:id="@+id/action_profileEditFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <argument
+            android:name="usuario"
+            app:argType="com.example.meet_ill.Usuario" />
     </fragment>
 
     <fragment
@@ -45,20 +40,13 @@
         android:name="com.example.meet_ill.ProfileFragment"
         android:label="fragment_saludo"
         tools:layout="@layout/fragment_profile_menu" >
-        <argument
-            android:name="username"
-            app:argType="string" />
-        <argument
-            android:name="realName"
-            app:argType="string" />
-        <argument
-            android:name="profilePic" />
-        <argument
-            android:name="patologias"
-            app:argType="string[]" />
+
         <action
             android:id="@+id/action_profileFragment_to_profileEditFragment"
             app:destination="@id/profileEditFragment" />
+        <argument
+            android:name="usuario"
+            app:argType="com.example.meet_ill.Usuario" />
     </fragment>
 
 </navigation>
