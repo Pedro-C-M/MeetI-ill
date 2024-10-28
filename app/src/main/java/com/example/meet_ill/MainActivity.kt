@@ -14,19 +14,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-
-        // Configurar la Toolbar
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-
-        // Obtener el botón de perfil y configurar el listener
-        val perfilBtn: Button = findViewById(R.id.perfilBtn)
-        perfilBtn.setOnClickListener {
-
-            val usuario = Usuario("nombreUsuario", "nombreReal","SIDA","LOL","MINEC","ss")
-
-        }
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -34,5 +21,4 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
 }
