@@ -3,22 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navegacion"
-    app:startDestination="@id/homeFragment">
-
-    <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.example.meet_ill.HomeFragment"
-        android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_homeFragment_to_testFragment"
-            app:destination="@id/testFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/testFragment"
-        android:name="com.example.meet_ill.TestFragment"
-        android:label="fragment_test"
-        tools:layout="@layout/fragment_test" />
+    app:startDestination="@id/profileFragment">
 
 
     <fragment
@@ -48,5 +33,12 @@
             android:name="usuario"
             app:argType="com.example.meet_ill.Usuario" />
     </fragment>
+
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.example.meet_ill.MainActivity"
+        android:label="activity_main"
+        tools:layout="@layout/activity_main"
+        />
 
 </navigation>
