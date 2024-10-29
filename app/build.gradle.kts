@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-
+    id("androidx.navigation.safeargs")
     alias(libs.plugins.googleServices)
     alias(libs.plugins.crashlytics)
 }

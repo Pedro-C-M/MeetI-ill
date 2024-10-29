@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meet_ill.adapters.ContactAdapter
@@ -38,7 +39,10 @@ class HomeFragment : Fragment() {
         recyclerContactos = requireView().findViewById(R.id.recyclerContactos)
         val listaContactos = crearContactosSimulado()
         recyclerContactos.layoutManager = LinearLayoutManager(requireContext())
-        recyclerContactos.adapter = ContactAdapter(listaContactos)
+        recyclerContactos.adapter = ContactAdapter(listaContactos){contacto ->
+            val destino = HomeFragmentDirections.actionHomeFragmentToChatFragment()
+            findNavController().navigate(destino)
+        }
     }
 
     private fun crearContactosSimulado(): MutableList<Contacto> {
