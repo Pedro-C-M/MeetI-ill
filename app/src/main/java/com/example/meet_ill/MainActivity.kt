@@ -6,6 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.findNavController
 
 
 class MainActivity : AppCompatActivity() {
@@ -20,5 +21,17 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        // Boton perfil
+        val perfilBtn: Button = findViewById(R.id.perfilBtn)
+
+        val usuario = Usuario("Paquillo1","Paco Menen","Sida",
+            "VIH","Mena", "Image")
+
+        val action = HomeFragmentDirections.actionHomeFragmentToProfileFragment(usuario)
+        // Set the click listener
+        perfilBtn.setOnClickListener {
+            // Navigate to the profile_menu fragment
+            findNavController(R.id.fragmentContainer).navigate(action)
+        }
     }
 }
