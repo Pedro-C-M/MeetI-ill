@@ -23,5 +23,9 @@
         android:id="@+id/chatFragment"
         android:name="com.example.meet_ill.ChatFragment"
         android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" />
+        tools:layout="@layout/fragment_chat" >
+        <argument
+            android:name="contacto"
+            app:argType="com.example.meet_ill.data_classes.Contacto" />
+    </fragment>
 </navigation>

@@ -4,6 +4,7 @@ plugins {
     id("androidx.navigation.safeargs")
     alias(libs.plugins.googleServices)
     alias(libs.plugins.crashlytics)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -46,6 +47,9 @@ dependencies {
     implementation(libs.firebase.auth)
     //Para la bd
     implementation(libs.firebase.firestore)
+
+    implementation(libs.coil)
+    implementation(libs.coil.network.okhttp)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

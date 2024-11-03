@@ -40,7 +40,7 @@ class HomeFragment : Fragment() {
         val listaContactos = crearContactosSimulado()
         recyclerContactos.layoutManager = LinearLayoutManager(requireContext())
         recyclerContactos.adapter = ContactAdapter(listaContactos){contacto ->
-            val destino = HomeFragmentDirections.actionHomeFragmentToChatFragment()
+            val destino = HomeFragmentDirections.actionHomeFragmentToChatFragment(contacto!!)
             findNavController().navigate(destino)
         }
     }
