@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Foto de perfil y contenedor del nombre y botón editar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- Foto de perfil -->
+        <ImageView
+            android:id="@+id/imgProfile"
+            android:layout_width="133dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:layout_marginEnd="16dp"
+            android:scaleType="centerCrop" />
+
+        <!-- Contenedor de nombre y botón de editar -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+
+            <!-- Nombre de usuario -->
+
+            <TextView
+                android:id="@+id/tvUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Username: @usuario"
+                android:textSize="20sp"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="8dp"/>
+
+
+            <Button
+                android:id="@+id/btnEditUser"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:text="Editar Usuario" />
+
+            <!-- Botón de editar usuario -->
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Nombre real -->
+
+    <!-- Texto Patología y Checkboxes -->
+
+    <TextView
+        android:id="@+id/tvRealName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="16dp"
+        android:text="Nombre real: Juan Pérez"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tvPathologyLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Patologías:"
+        android:textSize="20sp"/>
+
+    <!-- Spinner para patologías, podremos seleccionar hasta 3 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="5dp"
+        android:paddingStart="16dp">
+
+        <TextView
+            android:id="@+id/tvNombrePatologia1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Patologías 1..."
+            android:layout_marginTop="5dp"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/tvNombrePatologia2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Patologías 1..."
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/tvNombrePatologia3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Patologías 1..."
+            android:textSize="18sp"/>
+
+    </LinearLayout>
+</LinearLayout>
