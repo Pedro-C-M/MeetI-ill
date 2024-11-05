@@ -7,10 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil3.load
+import kotlin.random.Random
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,9 +30,11 @@ class ChatFragment : Fragment() {
     private lateinit var recyclerChats: RecyclerView
     private lateinit var tVContactName: TextView
     private lateinit var iVContactImage: ImageView
-    private lateinit var bSendMessage: Button
+    private lateinit var bSendMessage: ImageButton
     private lateinit var eTMessage: EditText
-    private lateinit var listaMensajes: MutableList<Message>
+    private var listaMensajes: MutableList<Message> = mutableListOf()
+
+    private val args : ChatFragmentArgs by navArgs()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,18 +52,36 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val contacto = args.contacto
         tVContactName = view.findViewById(R.id.tVContactName)
-        tVContactName.text="Mauricio"
+        tVContactName.text=contacto.nombre
+
+        iVContactImage = view.findViewById(R.id.iVContactImage)
+        iVContactImage.load(contacto.imagenPerfil)
+        repeat(15) { i ->
+            if (Random.nextBoolean())
+                listaMensajes.add( Message("Mensaje $i",true))
+            else
+                listaMensajes.add( Message("Mensaje $i",false))
+            }
+        eTMessage = view.findViewById(R.id.eTMessage)
+        bSendMessage = view.findViewById(R.id.bSend)
+
+        bSendMessage.setOnClickListener{
+            listaMensajes.add(Message(eTMessage.text.toString(),false))
+            eTMessage.text.clear()
+            inicializaRecyclerChats()
+        }
+
         inicializaRecyclerChats()
     }
 
     private fun inicializaRecyclerChats(){
         recyclerChats = requireView().findViewById(R.id.rVMessages)
 
-        listaMensajes = MutableList(15){i ->Message("Mensaje $i",Status.Read)}
-
         recyclerChats.layoutManager = LinearLayoutManager(requireContext())
 
+        val contacto = args.contacto
         recyclerChats.adapter = ChatAdapter(listaMensajes)
     }
 

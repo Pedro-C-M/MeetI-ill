@@ -26,7 +26,7 @@
             app:layout_constraintStart_toEndOf="@id/iVContactImage"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iVContactImage"
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -34,9 +34,19 @@
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-
+            app:shapeAppearanceOverlay="@style/CircleImageView"
             tools:srcCompat="@tools:sample/avatars" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/borderBelowInfo"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="#4A0072"
+        app:layout_constraintTop_toBottomOf="@id/cLInfo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -46,8 +56,20 @@
         app:layout_constraintBottom_toTopOf="@id/cLNewMessage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
+        android:padding="8dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cLInfo" />
+
+    <View
+        android:id="@+id/borderAboveNewMessage"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="#4A0072"
+        app:layout_constraintTop_toBottomOf="@id/rVMessages"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cLNewMessage"
@@ -55,16 +77,16 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rVMessages">
 
 
         <ImageButton
-            android:id="@+id/bSendMessage"
+            android:id="@+id/bSend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:foregroundTint="#FFFFFF"
-            app:tint="#31D3E9"
+            app:tint="#4A0072"
             android:layout_marginStart="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/guidelineNewMessage"

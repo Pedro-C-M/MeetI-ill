@@ -10,12 +10,23 @@ class ChatAdapter(val listaMessages: List<Message>): RecyclerView.Adapter<ChatAd
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){
         private var tvMessage: TextView = view.findViewById(R.id.tvMessage)
+        private var tvName: TextView = view.findViewById(R.id.tvName)
         private var message: Message? = null
 
 
 
         fun bind(message:Message){
             tvMessage.text = message.content
+            if(message.isReceived) {
+                tvMessage.textAlignment = View.TEXT_ALIGNMENT_TEXT_START
+                tvName.text = "Contacto x"
+                tvName.textAlignment = View.TEXT_ALIGNMENT_TEXT_START
+            }
+            else {
+                tvMessage.textAlignment = View.TEXT_ALIGNMENT_TEXT_END
+                tvName.text = "Yo"
+                tvName.textAlignment = View.TEXT_ALIGNMENT_TEXT_END
+            }
         }
     }
 

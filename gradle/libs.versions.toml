@@ -9,16 +9,20 @@ appcompat = "1.6.1"
 material = "1.10.0"
 activity = "1.8.0"
 constraintlayout = "2.1.4"
+materialVersion = "1.9.0"
 navigationFragmentKtx = "2.8.3"
 navigationUiKtx = "2.8.3"
 firebaseBom = "33.4.0"
 services = "4.4.2"
 crashlytics= "3.0.2"
+coil = "3.0.0-rc01"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -30,6 +34,7 @@ firebase-bom = { module ="com.google.firebase:firebase-bom", version.ref ="fireb
 firebase-crashlytics = {module ="com.google.firebase:firebase-crashlytics" }
 firebase-auth = {module = " com.google.firebase:firebase-auth"}
 firebase-firestore = { module="com.google.firebase:firebase-firestore"}
+material-v190 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
