@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         val perfilBtn: Button = findViewById(R.id.perfilBtn)
 
         val usuario = Usuario("Paquillo1","Paco Menen","Sida",
-            "VIH","Mena", "Mena")
+            "VIH","Fibromialgia", "Lupus")
 
         val navController = findNavController(R.id.fragmentContainer)
 
