@@ -48,6 +48,8 @@ dependencies {
     //Para la bd
     implementation(libs.firebase.firestore)
 
+    implementation(libs.material.v190)
+
     implementation(libs.coil)
     implementation(libs.coil.network.okhttp)
 
@@ -61,4 +63,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+
 }

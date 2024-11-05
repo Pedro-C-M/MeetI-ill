@@ -14,6 +14,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
+import kotlin.random.Random
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -31,7 +32,7 @@ class ChatFragment : Fragment() {
     private lateinit var iVContactImage: ImageView
     private lateinit var bSendMessage: ImageButton
     private lateinit var eTMessage: EditText
-    private lateinit var listaMensajes: MutableList<Message>
+    private var listaMensajes: MutableList<Message> = mutableListOf()
 
     private val args : ChatFragmentArgs by navArgs()
 
@@ -57,12 +58,17 @@ class ChatFragment : Fragment() {
 
         iVContactImage = view.findViewById(R.id.iVContactImage)
         iVContactImage.load(contacto.imagenPerfil)
-        listaMensajes = MutableList(15){i ->Message("Mensaje $i",Status.Read)}
+        repeat(15) { i ->
+            if (Random.nextBoolean())
+                listaMensajes.add( Message("Mensaje $i",true))
+            else
+                listaMensajes.add( Message("Mensaje $i",false))
+            }
         eTMessage = view.findViewById(R.id.eTMessage)
         bSendMessage = view.findViewById(R.id.bSend)
 
         bSendMessage.setOnClickListener{
-            listaMensajes.add(Message(eTMessage.text.toString(),Status.Received))
+            listaMensajes.add(Message(eTMessage.text.toString(),false))
             eTMessage.text.clear()
             inicializaRecyclerChats()
         }
@@ -75,6 +81,7 @@ class ChatFragment : Fragment() {
 
         recyclerChats.layoutManager = LinearLayoutManager(requireContext())
 
+        val contacto = args.contacto
         recyclerChats.adapter = ChatAdapter(listaMensajes)
     }
 

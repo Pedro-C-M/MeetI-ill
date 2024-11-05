@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.meet_ill.adapters.ContactAdapter
 import com.example.meet_ill.data_classes.Contacto
+import kotlin.random.Random
 
 
 class HomeFragment : Fragment() {
@@ -49,13 +50,27 @@ class HomeFragment : Fragment() {
         val contactos = mutableListOf<Contacto>()
 
         for (i in 1..15) {
-            val contacto = Contacto(
-                imagenPerfil = "https://example.com/imagen$i.jpg",
-                nombre = "Contacto $i",
-                ultimoMensaje = "Este es el último mensaje del contacto $i",
-                horaUltimoMensaje = "12:${20-i}" // Genera una hora variada para cada contacto
-            )
-            contactos.add(contacto)
+            if(Random.nextBoolean()) {
+                val contacto = Contacto(
+                    imagenPerfil = "https://randomuser.me/api/portraits/women/${i}.jpg",
+                    nombre = "Contacto $i",
+                    ultimoMensaje = "Este es el último mensaje del contacto $i",
+                    horaUltimoMensaje = "12:${20 - i}" // Genera una hora variada para cada contacto
+                )
+
+                contactos.add(contacto)
+            }
+            else{
+                val contacto = Contacto(
+                    imagenPerfil = "https://randomuser.me/api/portraits/men/${i}.jpg",
+                    nombre = "Contacto $i",
+                    ultimoMensaje = "Mensaje 14",
+                    horaUltimoMensaje = "12:${20 - i}" // Genera una hora variada para cada contacto
+                )
+
+                contactos.add(contacto)
+            }
+
         }
 
         return contactos

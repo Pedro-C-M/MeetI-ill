@@ -9,6 +9,7 @@ appcompat = "1.6.1"
 material = "1.10.0"
 activity = "1.8.0"
 constraintlayout = "2.1.4"
+materialVersion = "1.9.0"
 navigationFragmentKtx = "2.8.3"
 navigationUiKtx = "2.8.3"
 firebaseBom = "33.4.0"
@@ -33,6 +34,7 @@ firebase-bom = { module ="com.google.firebase:firebase-bom", version.ref ="fireb
 firebase-crashlytics = {module ="com.google.firebase:firebase-crashlytics" }
 firebase-auth = {module = " com.google.firebase:firebase-auth"}
 firebase-firestore = { module="com.google.firebase:firebase-firestore"}
+material-v190 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

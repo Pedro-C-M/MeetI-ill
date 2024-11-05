@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import coil3.load
 import com.example.meet_ill.R
 import com.example.meet_ill.data_classes.Contacto
 
@@ -28,9 +29,11 @@ class ContactAdapter(
 
         fun bind(contacto: Contacto){
             tvNombre.text = contacto.nombre
+
             tvUltMensaje.text = contacto.ultimoMensaje
             tvHora.text = contacto.horaUltimoMensaje
             contactoActual = contacto
+            ivPerfilImage.load(contacto.imagenPerfil)
         }
 
         init{
