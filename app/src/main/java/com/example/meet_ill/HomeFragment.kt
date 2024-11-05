@@ -54,7 +54,7 @@ class HomeFragment : Fragment() {
                 val contacto = Contacto(
                     imagenPerfil = "https://randomuser.me/api/portraits/women/${i}.jpg",
                     nombre = "Contacto $i",
-                    ultimoMensaje = "Este es el último mensaje del contacto $i",
+                    ultimoMensaje = "Mensaje 14",
                     horaUltimoMensaje = "12:${20 - i}" // Genera una hora variada para cada contacto
                 )
 
