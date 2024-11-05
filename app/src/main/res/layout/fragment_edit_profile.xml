@@ -6,12 +6,32 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <ImageView
-        android:id="@+id/imgProfile"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
+
+    <!-- Contenedor de la imagen de perfil y el icono de editar -->
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:scaleType="centerCrop" />
+        android:paddingBottom="16dp">
+
+        <ImageView
+            android:id="@+id/imgProfile"
+            android:layout_width="174dp"
+            android:layout_height="174dp"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/btnEditImage"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="4dp"
+            android:src="@drawable/ic_edit" />
+    </FrameLayout>
+
+
     <EditText
         android:id="@+id/etUsername"
         android:layout_width="match_parent"
@@ -62,4 +82,5 @@
         android:layout_height="wrap_content"
         android:text="Guardar"
         android:layout_gravity="end" />
+
 </LinearLayout>

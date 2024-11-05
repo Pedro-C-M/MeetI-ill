@@ -25,13 +25,17 @@ class MainActivity : AppCompatActivity() {
         val perfilBtn: Button = findViewById(R.id.perfilBtn)
 
         val usuario = Usuario("Paquillo1","Paco Menen","Sida",
-            "VIH","Mena", "Image")
+            "VIH","Mena", "Mena")
 
-        val action = HomeFragmentDirections.actionHomeFragmentToProfileFragment(usuario)
-        // Set the click listener
+        val navController = findNavController(R.id.fragmentContainer)
+
         perfilBtn.setOnClickListener {
-            // Navigate to the profile_menu fragment
-            findNavController(R.id.fragmentContainer).navigate(action)
+            // Para que no pete, solo funciona si estamos en home fragment
+            val currentFragment = navController.currentDestination?.id
+            if (currentFragment == R.id.homeFragment) {
+                val action = HomeFragmentDirections.actionHomeFragmentToProfileFragment(usuario)
+                navController.navigate(action)
+            }
         }
     }
 }

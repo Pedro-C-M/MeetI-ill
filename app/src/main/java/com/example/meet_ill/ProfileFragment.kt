@@ -1,5 +1,6 @@
 package com.example.meet_ill
 
+import android.net.Uri
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import android.os.Bundle
@@ -45,8 +46,9 @@ class ProfileFragment : Fragment() {
         tvPatologia1.text=argumentos.usuario.patologia1
         tvPatologia2.text=argumentos.usuario.patologia2
         tvPatologia3.text=argumentos.usuario.patologia3
-        //imgProfile
-
+        //val uri = Uri.parse(argumentos.usuario.imagenPerfil)
+        //imgProfile.setImageURI(uri)
+        imgProfile.setImageResource(R.drawable.default_profile_image)
         return view
     }
 
