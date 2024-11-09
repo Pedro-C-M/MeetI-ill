@@ -1,7 +1,6 @@
 package com.example.meet_ill.data_classes
 
 import android.os.Parcelable
-import com.example.meet_ill.Message
 import kotlinx.parcelize.Parcelize
 /**
  * Al ser una data class su constructor y getters están implicitos

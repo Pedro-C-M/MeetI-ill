@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -14,6 +13,8 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
+import com.example.meet_ill.adapters.ChatAdapter
+import com.example.meet_ill.data_classes.Message
 import kotlin.random.Random
 
 // TODO: Rename parameter arguments, choose names that match

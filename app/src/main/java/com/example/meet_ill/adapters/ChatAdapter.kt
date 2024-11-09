@@ -1,10 +1,12 @@
-package com.example.meet_ill
+package com.example.meet_ill.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.meet_ill.data_classes.Message
+import com.example.meet_ill.R
 
 class ChatAdapter(val listaMessages: List<Message>): RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
 
@@ -15,7 +17,7 @@ class ChatAdapter(val listaMessages: List<Message>): RecyclerView.Adapter<ChatAd
 
 
 
-        fun bind(message:Message){
+        fun bind(message: Message){
             tvMessage.text = message.content
             if(message.isReceived) {
                 tvMessage.textAlignment = View.TEXT_ALIGNMENT_TEXT_START

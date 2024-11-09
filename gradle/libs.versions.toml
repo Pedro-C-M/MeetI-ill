@@ -16,6 +16,9 @@ firebaseBom = "33.4.0"
 services = "4.4.2"
 crashlytics= "3.0.2"
 coil = "3.0.0-rc01"
+annotation = "1.9.0"
+lifecycleLivedataKtx = "2.8.6"
+lifecycleViewmodelKtx = "2.8.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -35,6 +38,9 @@ firebase-crashlytics = {module ="com.google.firebase:firebase-crashlytics" }
 firebase-auth = {module = " com.google.firebase:firebase-auth"}
 firebase-firestore = { module="com.google.firebase:firebase-firestore"}
 material-v190 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
+androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
