@@ -15,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.Arrays
 
 class SignupActivity : AppCompatActivity() {
 
@@ -107,6 +108,8 @@ class SignupActivity : AppCompatActivity() {
         db.collection("users").document().set(hashMapOf(
             "apodo" to nicknameEditText.text.toString(),
             "email" to emailEditText.text.toString(),
-            "name" to nameEditText.text.toString()))
+            "name" to nameEditText.text.toString(),
+        "groupsIds2" to mutableListOf<String>()
+        ))
     }
 }
