@@ -14,6 +14,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SignupActivity : AppCompatActivity() {
 
@@ -72,6 +73,7 @@ class SignupActivity : AppCompatActivity() {
                         .addOnCompleteListener{//El parametro que nos llega se llama it (this de los lambdas), podemo poner otro nombre con result -> como normal vaya
             if(it.isSuccessful){
             showHome(emailEditText.text.toString())
+             añadirUsuario()
             }
             else{
                 showAlert()
@@ -98,5 +100,13 @@ class SignupActivity : AppCompatActivity() {
         val dialog: AlertDialog = builder.create()
         dialog.show()
 
+    }
+
+    private fun añadirUsuario(){
+         val db = FirebaseFirestore.getInstance()
+        db.collection("users").document().set(hashMapOf(
+            "apodo" to nicknameEditText.text.toString(),
+            "email" to emailEditText.text.toString(),
+            "name" to nameEditText.text.toString()))
     }
 }
