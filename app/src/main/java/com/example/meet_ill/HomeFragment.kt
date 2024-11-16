@@ -6,16 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.meet_ill.adapters.ContactAdapter
-import com.example.meet_ill.data_classes.Contacto
-import kotlin.random.Random
+import com.example.meet_ill.adapters.GroupAdapter
+import com.example.meet_ill.data_classes.Grupo
+import com.example.meet_ill.databinding.FragmentHomeBinding
 
 
 class HomeFragment : Fragment() {
-
-    private lateinit var recyclerContactos : RecyclerView
+    private lateinit var binding: FragmentHomeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +26,8 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,43 +37,31 @@ class HomeFragment : Fragment() {
 
     private fun generarRecyclerContactos() {
 
-        recyclerContactos = requireView().findViewById(R.id.recyclerContactos)
-        val listaContactos = crearContactosSimulado()
-        recyclerContactos.layoutManager = LinearLayoutManager(requireContext())
-        recyclerContactos.adapter = ContactAdapter(listaContactos){contacto ->
-            val destino = HomeFragmentDirections.actionHomeFragmentToChatFragment(contacto!!)
-            findNavController().navigate(destino)
+        val listaGrupos = crearGrupos()
+        binding.recyclerGrupos.layoutManager = GridLayoutManager(requireContext(), 2)
+        binding.recyclerGrupos.adapter = GroupAdapter(listaGrupos){ grupo ->
+            //val destino = HomeFragmentDirections.actionHomeFragmentToChatFragment(grupo!!)
+            //findNavController().navigate(destino)
         }
     }
 
-    private fun crearContactosSimulado(): MutableList<Contacto> {
-        val contactos = mutableListOf<Contacto>()
-
-        for (i in 1..15) {
-            if(Random.nextBoolean()) {
-                val contacto = Contacto(
-                    imagenPerfil = "https://randomuser.me/api/portraits/women/${i}.jpg",
-                    nombre = "Contacto $i",
-                    ultimoMensaje = "Mensaje 14",
-                    horaUltimoMensaje = "12:${20 - i}" // Genera una hora variada para cada contacto
-                )
-
-                contactos.add(contacto)
-            }
-            else{
-                val contacto = Contacto(
-                    imagenPerfil = "https://randomuser.me/api/portraits/men/${i}.jpg",
-                    nombre = "Contacto $i",
-                    ultimoMensaje = "Mensaje 14",
-                    horaUltimoMensaje = "12:${20 - i}" // Genera una hora variada para cada contacto
-                )
-
-                contactos.add(contacto)
-            }
-
-        }
-
-        return contactos
+    private fun crearGrupos(): List<Grupo> {
+        return listOf(
+            Grupo(
+                titulo = "Grupo de pie",
+                numeroDeIntegrantes = 5,
+                urlImagen = R.drawable.fondo1
+            ),
+            Grupo(
+                titulo = "Grupo de pata",
+                numeroDeIntegrantes = 3,
+                urlImagen = R.drawable.fondo2
+            ),
+            Grupo(
+                titulo = "Grupo de patonas",
+                numeroDeIntegrantes = 7,
+                urlImagen = R.drawable.fondo3
+            )
+        )
     }
-
 }
