@@ -28,7 +28,7 @@ class UserRepository {
                 null // Si no existe el documento
             }
         } catch (e: Exception) {
-            Log.e("Firebase", "Error al obtener el usuario", e)
+            Log.e("Repos", "Error al obtener el usuario", e)
             null
         }
     }

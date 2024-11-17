@@ -29,8 +29,36 @@ class GroupRepository {
             )
 
         } catch (e: Exception) {
-            Log.e("Firebase", "Error al obtener el grupo", e)
+            Log.e("Repos", "Error al obtener el grupo", e)
             null
+        }
+    }
+    suspend fun getAllGroups(context:Context):MutableList<Grupo>{
+        val gruposList = mutableListOf<Grupo>()
+        return try {
+            val result = db.get().await()
+            for (document in result.documents){
+                var fondo = document.getString("urlImagen") ?: "fondo1"
+                if(fondo.isBlank())
+                {
+                    fondo = "fondo1"
+                }
+                val resourceId = context.resources.getIdentifier(fondo, "drawable", context.packageName)
+                //Creo el gurpo
+                val grupo = Grupo(
+                    titulo = document.getString("nombre") ?: "Sin título",
+                    numeroDeIntegrantes = (document.get("participantes") as? List<String>)?.count() ?: 0,
+                    urlImagen = resourceId,
+                    idGrupo = document.id
+                )
+                gruposList.add(grupo)
+            }
+
+            return gruposList
+        }
+        catch (e: Exception) {
+            Log.e("Repos", "Error al obtener los grupos", e)
+            mutableListOf()  // Retorna una lista vacía si ocurre un error
         }
     }
 }

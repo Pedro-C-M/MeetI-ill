@@ -11,20 +11,13 @@
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/action_homeFragment_to_testFragment"
-            app:destination="@id/testFragment" />
-        <action
             android:id="@+id/action_homeFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
         <action
             android:id="@+id/action_homeFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/testFragment"
-        android:name="com.example.meet_ill.TestFragment"
-        android:label="fragment_test"
-        tools:layout="@layout/fragment_test" />
+
     <fragment
         android:id="@+id/chatFragment"
         android:name="com.example.meet_ill.ChatFragment"
