@@ -13,8 +13,11 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.marginTop
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.meet_ill.databinding.FragmentEditProfileBinding
@@ -30,12 +33,15 @@ class ProfileEditFragment : Fragment()  {
     private lateinit var imgProfile: ImageView
     private lateinit var etUsername: EditText
     private lateinit var etRealName: EditText
-    private lateinit var spnPatologia1: Spinner
-    private lateinit var spnPatologia2: Spinner
-    private lateinit var spnPatologia3: Spinner
     private lateinit var btnSave: Button
 
     private lateinit var selectedImageUri: Uri
+
+    private lateinit var btnAddSpinner: Button
+    private lateinit var btnRemoveSpinner: Button
+    private lateinit var spinnersContainer: LinearLayout
+    private val spinnerList = mutableListOf<Spinner>()
+
 
 
     override fun onCreateView(
@@ -49,23 +55,67 @@ class ProfileEditFragment : Fragment()  {
         imgProfile = view.findViewById(R.id.imgProfile)
         etUsername = view.findViewById(R.id.etUsername)
         etRealName = view.findViewById(R.id.etRealName)
-        spnPatologia1 = view.findViewById(R.id.spnPatologia1)
-        spnPatologia2 = view.findViewById(R.id.spnPatologia2)
-        spnPatologia3 = view.findViewById(R.id.spnPatologia3)
         btnSave = view.findViewById(R.id.btnSave)
         imgProfile.setImageResource(R.drawable.default_profile_image)
+
+
+        spinnersContainer = view.findViewById(R.id.spinnersContainer)
+        btnAddSpinner = view.findViewById(R.id.btnAddSpinner)
+        btnRemoveSpinner = view.findViewById(R.id.btnRemoveSpinner)
+
+        btnAddSpinner.setOnClickListener {
+            if (spinnerList.size < 5) {
+                val newSpinner = createSpinner()
+                spinnerList.add(newSpinner)
+                spinnersContainer.addView(newSpinner)
+            }
+        }
+
+        btnRemoveSpinner.setOnClickListener {
+            if (spinnerList.size > 0) {
+                val lastSpinner = spinnerList.removeAt(spinnerList.size - 1)
+                spinnersContainer.removeView(lastSpinner)
+            }
+        }
 
         // Imagen de perfil (click para seleccionar)
         imgProfile.setOnClickListener {
             seleccionarImagen()
         }
 
-        // Rellenar spinners
-        rellenaPatologias()
-
         rellenaHints()
 
         return view
+    }
+
+    private fun createSpinner(): Spinner {
+        val patologias = listOf("Diabetes", "VIH", "Hipertensión", "Asma", "Artritis", "Epilepsia",
+            "Alzheimer", "Parkinson", "Esclerosis múltiple", "Cáncer", "Enfermedad cardíaca", "EPOC",
+            "Insuficiencia renal", "Fibromialgia", "Lupus", "Anemia", "Migraña", "Obesidad",
+            "Hipotiroidismo", "Alergias"
+        )
+        val spinner = Spinner(requireContext())
+        // Crear un ArrayAdapter con un TextView personalizado
+        val adapter = object : ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, patologias) {
+            override fun getView(position: Int, convertView: android.view.View?, parent: android.view.ViewGroup): android.view.View {
+                val view = super.getView(position, convertView, parent)
+                val textView = view as TextView
+                textView.textSize = 19f // Establecer tamaño de texto a 16sp
+                textView.setPadding(20, 20, 20, 20)
+                return view
+            }
+
+            override fun getDropDownView(position: Int, convertView: android.view.View?, parent: android.view.ViewGroup): android.view.View {
+                val view = super.getDropDownView(position, convertView, parent)
+                val textView = view as TextView
+                textView.textSize = 25f // Establecer tamaño de texto a 16sp para el dropdown
+                return view
+            }
+        }
+
+        spinner.adapter = adapter
+
+        return spinner
     }
 
     private fun rellenaHints() {
@@ -123,24 +173,6 @@ class ProfileEditFragment : Fragment()  {
         }
     }
 
-
-    private fun rellenaPatologias() {
-        val patologias = listOf("Diabetes", "VIH", "Hipertensión", "Asma", "Artritis", "Epilepsia",
-            "Alzheimer", "Parkinson", "Esclerosis múltiple", "Cáncer", "Enfermedad cardíaca", "EPOC",
-            "Insuficiencia renal", "Fibromialgia", "Lupus", "Anemia", "Migraña", "Obesidad",
-            "Hipotiroidismo", "Alergias"
-        )
-
-        // Configurar el ArrayAdapter
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, patologias)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-        // Asignar el adaptador al Spinner
-        spnPatologia1.adapter = adapter
-        spnPatologia2.adapter = adapter
-        spnPatologia3.adapter = adapter
-    }
-
     override fun onStart() {
         super.onStart()
 
@@ -167,20 +199,33 @@ class ProfileEditFragment : Fragment()  {
                     updates["name"] = realName
                 }
 
-                val patologia1 = spnPatologia1.selectedItem.toString()
-                val patologia2 = spnPatologia2.selectedItem.toString()
-                val patologia3 = spnPatologia3.selectedItem.toString()
+                val patologiasSeleccionadas = mutableListOf<String>()
 
-                if (patologia1 != patologia2 && patologia1 != patologia3 && patologia2 != patologia3) {
-                    updates["patologia1"] = patologia1
-                    updates["patologia2"] = patologia2
-                    updates["patologia3"] = patologia3
+                for (spinner in spinnerList) {
+                    val selectedPatologia = spinner.selectedItem.toString()
+                    if (selectedPatologia.isNotEmpty()) {
+                        patologiasSeleccionadas.add(selectedPatologia)
+                    }
+                }
+
+                if (patologiasSeleccionadas.size == patologiasSeleccionadas.distinct().size) {
+                    for (i in 0 until 5) {
+                        if (i < patologiasSeleccionadas.size) {
+                            if (patologiasSeleccionadas[i].isNotEmpty()) {
+                                updates["patologia${i + 1}"] = patologiasSeleccionadas[i]
+                            } else {
+                                updates["patologia${i + 1}"] = ""
+                            }
+                        } else {
+                            updates["patologia${i + 1}"] = ""
+                        }
+                    }
                 } else {
                     Toast.makeText(requireContext(), "Las patologías no pueden repetirse", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
 
-                // Subir la imagen
+                // Subir la imagen. todo: lo quitamos por ahora
                 //uploadImage(userId)
 
                 // Si no hay nada que actualizar, no hacer nada

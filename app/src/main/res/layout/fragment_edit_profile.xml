@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
-
+    android:padding="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- Contenedor de la imagen de perfil y el icono de editar -->
     <FrameLayout
+        android:id="@+id/imgProfileContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:paddingBottom="16dp">
+        android:layout_marginBottom="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/imgProfile"
@@ -24,63 +25,94 @@
             android:id="@+id/btnEditImage"
             android:layout_width="42dp"
             android:layout_height="42dp"
-            android:layout_gravity="bottom|end"
             android:layout_margin="4dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="4dp"
-            android:src="@drawable/ic_edit" />
+            android:src="@drawable/ic_edit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
     </FrameLayout>
 
-
+    <!-- Nombre de usuario -->
     <EditText
         android:id="@+id/etUsername"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:hint="Nombre de usuario" />
+        android:hint="Nombre de usuario"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imgProfileContainer" />
 
+    <!-- Nombre completo -->
     <EditText
         android:id="@+id/etRealName"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:hint="Nombre completo" />
+        android:hint="Nombre completo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etUsername" />
 
+    <!-- Título "Patologías:" -->
     <TextView
+        android:id="@+id/tvPatologias"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="22sp"
+        android:text="Patologías:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etRealName" />
+
+    <!-- Contenedor para los Spinners -->
+    <LinearLayout
+        android:id="@+id/spinnersContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Patología 1:" />
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvPatologias" />
 
-    <Spinner
-        android:id="@+id/spnPatologia1"
-        android:layout_width="match_parent"
-        android:layout_height="48dp" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Patología 2:" />
-
-    <Spinner
-        android:id="@+id/spnPatologia2"
-        android:layout_width="match_parent"
-        android:layout_height="48dp" />
-
-    <TextView
+    <!-- Botones para agregar o eliminar Spinners -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Patología 3:" />
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spinnersContainer">
 
-    <Spinner
-        android:id="@+id/spnPatologia3"
-        android:layout_width="match_parent"
-        android:layout_height="48dp" />
+        <Button
+            android:id="@+id/btnAddSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="180dp"
+            android:text="+" />
 
+        <Button
+            android:id="@+id/btnRemoveSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-"
+            android:layout_marginStart="16dp" />
+    </LinearLayout>
+
+    <!-- Botón Guardar fijo en la parte inferior -->
     <Button
         android:id="@+id/btnSave"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="Guardar"
-        android:layout_gravity="end" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

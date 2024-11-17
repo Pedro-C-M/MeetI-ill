@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -23,9 +24,6 @@ class ProfileFragment : Fragment() {
     private lateinit var tvUsername: TextView
     private lateinit var tvRealName: TextView
     private lateinit var tvCorreo: TextView
-    private lateinit var tvPatologia1: TextView
-    private lateinit var tvPatologia2: TextView
-    private lateinit var tvPatologia3: TextView
     private lateinit var btnEditUser: Button
 
     private val argumentos : ProfileFragmentArgs by navArgs()
@@ -42,9 +40,6 @@ class ProfileFragment : Fragment() {
         tvUsername = view.findViewById(R.id.tvUsername)
         tvRealName = view.findViewById(R.id.tvRealName)
         tvCorreo = view.findViewById(R.id.tvCorreo)
-        tvPatologia1 = view.findViewById(R.id.tvNombrePatologia1)
-        tvPatologia2 = view.findViewById(R.id.tvNombrePatologia2)
-        tvPatologia3 = view.findViewById(R.id.tvNombrePatologia3)
         btnEditUser = view.findViewById(R.id.btnEditUser)
 
 
@@ -59,10 +54,6 @@ class ProfileFragment : Fragment() {
         tvUsername.text=argumentos.usuario.nombreUsuario
         tvRealName.text=argumentos.usuario.nombreReal
         tvCorreo.text=argumentos.usuario.email
-        tvPatologia1.text=argumentos.usuario.patologia1
-        tvPatologia2.text=argumentos.usuario.patologia2
-        tvPatologia3.text=argumentos.usuario.patologia3
-
         imgProfile.setImageResource(R.drawable.default_profile_image)
     }
 
@@ -82,10 +73,27 @@ class ProfileFragment : Fragment() {
                         tvRealName.text = document.getString("name") ?: "Sin nombre"
                         tvCorreo.text = document.getString("email") ?: "Sin correo"
 
-                        // No hay campos específicos para patologías en tu estructura actual, se pueden dejar vacíos o manejar de otra forma
-                        tvPatologia1.text =  document.getString("patologia1") ?: "N/A"
-                        tvPatologia2.text =  document.getString("patologia2") ?: "N/A"
-                        tvPatologia3.text =  document.getString("patologia3") ?: "N/A"
+                        val patologias = listOf(
+                            document.getString("patologia1") ?: "",
+                            document.getString("patologia2") ?: "",
+                            document.getString("patologia3") ?: "",
+                            document.getString("patologia4") ?: "",
+                            document.getString("patologia5") ?: ""
+                        )
+
+                        val layoutPatologias = view?.findViewById<LinearLayout>(R.id.linearLayoutPatologias)
+                        layoutPatologias?.removeAllViews()
+
+                        for (patologia in patologias) {
+                            if (patologia.isNotEmpty()) {
+                                val textView = TextView(requireContext())
+                                textView.text = patologia
+                                textView.textSize = 18f // Establecer tamaño de texto
+                                textView.setPadding(0, 5, 0, 5) // Añadir algo de espacio entre patologías
+                                layoutPatologias?.addView(textView)
+                            }
+                        }
+
 
                         val imageUrl = ""
                         if (!imageUrl.isNullOrEmpty()) {
