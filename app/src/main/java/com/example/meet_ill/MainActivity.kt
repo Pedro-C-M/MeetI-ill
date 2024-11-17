@@ -6,8 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.example.meet_ill.databinding.ActivityMainBinding
 import com.example.meet_ill.data_classes.Usuario
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class MainActivity : AppCompatActivity() {
@@ -39,5 +42,9 @@ class MainActivity : AppCompatActivity() {
                 navController.navigate(action)
             }
         }
+
+        val bottomViewNav = findViewById<BottomNavigationView>(R.id.navBar)
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+        bottomViewNav.setupWithNavController(navHostFragment.navController)
     }
 }
