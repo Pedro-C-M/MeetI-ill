@@ -43,9 +43,6 @@
         <action
             android:id="@+id/action_profileEditFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
-        <argument
-            android:name="usuario"
-            app:argType="com.example.meet_ill.data_classes.Usuario" />
     </fragment>
     <fragment
 
@@ -53,12 +50,8 @@
         android:name="com.example.meet_ill.ProfileFragment"
         android:label="fragment_saludo"
         tools:layout="@layout/fragment_profile_menu" >
-
         <action
             android:id="@+id/action_profileFragment_to_profileEditFragment"
             app:destination="@id/profileEditFragment" />
-        <argument
-            android:name="usuario"
-            app:argType="com.example.meet_ill.data_classes.Usuario" />
     </fragment>
 </navigation>

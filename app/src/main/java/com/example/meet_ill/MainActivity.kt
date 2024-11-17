@@ -26,16 +26,12 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val usuario = Usuario("Paquillo1","Paco Menen","prueba1@gmail.com","Sida",
-            "VIH","Fibromialgia", "Lupus")
-
         val navController = findNavController(R.id.fragmentContainer)
 
         binding.customBar.perfilBtn.setOnClickListener {
-            // Para que no pete, solo funciona si estamos en home fragment
             val currentFragment = navController.currentDestination?.id
             if (currentFragment == R.id.homeFragment) {
-                val action = HomeFragmentDirections.actionHomeFragmentToProfileFragment(usuario)
+                val action = HomeFragmentDirections.actionHomeFragmentToProfileFragment()
                 navController.navigate(action)
             }
         }

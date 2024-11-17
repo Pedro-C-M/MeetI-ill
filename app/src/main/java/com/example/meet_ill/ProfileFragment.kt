@@ -26,8 +26,6 @@ class ProfileFragment : Fragment() {
     private lateinit var tvCorreo: TextView
     private lateinit var btnEditUser: Button
 
-    private val argumentos : ProfileFragmentArgs by navArgs()
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,18 +42,10 @@ class ProfileFragment : Fragment() {
 
 
         cargarDatosUsuario()
-        //cargarDatosAntiguosUsuario()
 
         return view
     }
 
-    private fun cargarDatosAntiguosUsuario() {
-        //Saco los valores del usuario....
-        tvUsername.text=argumentos.usuario.nombreUsuario
-        tvRealName.text=argumentos.usuario.nombreReal
-        tvCorreo.text=argumentos.usuario.email
-        imgProfile.setImageResource(R.drawable.default_profile_image)
-    }
 
     private fun cargarDatosUsuario() {
         val currentUser = FirebaseAuth.getInstance().currentUser
@@ -136,7 +126,7 @@ class ProfileFragment : Fragment() {
         btnEditUser.setOnClickListener {
             btnEditUser.setOnClickListener {
 
-                val destino = ProfileFragmentDirections.actionProfileFragmentToProfileEditFragment(argumentos.usuario)
+                val destino = ProfileFragmentDirections.actionProfileFragmentToProfileEditFragment()
                 findNavController().navigate(destino)
             }
 
