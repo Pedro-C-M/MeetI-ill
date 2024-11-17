@@ -16,24 +16,12 @@
         <action
             android:id="@+id/action_homeFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_chatFragment"
-            app:destination="@id/chatFragment" />
     </fragment>
     <fragment
         android:id="@+id/testFragment"
         android:name="com.example.meet_ill.TestFragment"
         android:label="fragment_test"
         tools:layout="@layout/fragment_test" />
-    <fragment
-        android:id="@+id/chatFragment"
-        android:name="com.example.meet_ill.ChatFragment"
-        android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" >
-        <argument
-            android:name="contacto"
-            app:argType="com.example.meet_ill.data_classes.Contacto" />
-    </fragment>
     <fragment
         android:id="@+id/profileEditFragment"
         android:name="com.example.meet_ill.ProfileEditFragment"

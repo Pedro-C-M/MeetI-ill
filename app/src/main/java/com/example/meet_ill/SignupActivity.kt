@@ -12,9 +12,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.Arrays
 
 class SignupActivity : AppCompatActivity() {
@@ -106,12 +109,16 @@ class SignupActivity : AppCompatActivity() {
     private fun añadirUsuario(){
         val user = FirebaseAuth.getInstance().currentUser
         val userId = user?.uid
-         val db = FirebaseFirestore.getInstance()
-        db.collection("users").document(userId!!).set(hashMapOf(
-            "apodo" to nicknameEditText.text.toString(),
-            "email" to emailEditText.text.toString(),
-            "name" to nameEditText.text.toString(),
-        "groupsIds" to mutableListOf<String>()
-        ))
+        lifecycleScope.launch(Dispatchers.IO) {
+            val db = FirebaseFirestore.getInstance()
+            db.collection("users").document(userId!!).set(
+                hashMapOf(
+                    "apodo" to nicknameEditText.text.toString(),
+                    "email" to emailEditText.text.toString(),
+                    "name" to nameEditText.text.toString(),
+                    "groupsIds" to mutableListOf<String>()
+                )
+            )
+        }
     }
 }
