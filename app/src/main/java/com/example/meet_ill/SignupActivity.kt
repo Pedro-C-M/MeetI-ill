@@ -102,10 +102,12 @@ class SignupActivity : AppCompatActivity() {
         dialog.show()
 
     }
-
+    //Función para añadir al usuario también a la bd
     private fun añadirUsuario(){
+        val user = FirebaseAuth.getInstance().currentUser
+        val userId = user?.uid
          val db = FirebaseFirestore.getInstance()
-        db.collection("users").document().set(hashMapOf(
+        db.collection("users").document(userId!!).set(hashMapOf(
             "apodo" to nicknameEditText.text.toString(),
             "email" to emailEditText.text.toString(),
             "name" to nameEditText.text.toString(),
