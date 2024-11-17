@@ -97,9 +97,9 @@ class ProfileEditFragment : Fragment()  {
 
                 argumentos.usuario.nombreUsuario = username
                 argumentos.usuario.nombreReal = realName
-                argumentos.usuario.patologia1 = patologia1
-                argumentos.usuario.patologia2 = patologia2
-                argumentos.usuario.patologia3 = patologia3
+                argumentos.usuario.patologias.add(patologia1)
+                argumentos.usuario.patologias.add(patologia2)
+                argumentos.usuario.patologias.add(patologia3)
                 //Aqui asignarimos la imagen que se deberia seleccionar, no implemntado
 
                 val destino = ProfileEditFragmentDirections.actionProfileEditFragmentToProfileFragment(argumentos.usuario)
