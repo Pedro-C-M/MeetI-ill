@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val usuario = Usuario("Paquillo1","Paco Menen","Sida",
+        val usuario = Usuario("Paquillo1","Paco Menen","prueba1@gmail.com","Sida",
             "VIH","Fibromialgia", "Lupus")
 
         val navController = findNavController(R.id.fragmentContainer)

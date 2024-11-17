@@ -7,6 +7,7 @@ data class Usuario(
 
     var nombreUsuario: String,
     var nombreReal: String,
+    var email: String,
     var patologia1: String,
     var patologia2: String,
     var patologia3: String,
