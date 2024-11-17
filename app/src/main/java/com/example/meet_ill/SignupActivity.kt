@@ -111,8 +111,7 @@ class SignupActivity : AppCompatActivity() {
             "apodo" to nicknameEditText.text.toString(),
             "email" to emailEditText.text.toString(),
             "name" to nameEditText.text.toString(),
-            "imagenPerfil" to "null",
-        "groupsIds2" to mutableListOf<String>()
+        "groupsIds" to mutableListOf<String>()
         ))
     }
 }

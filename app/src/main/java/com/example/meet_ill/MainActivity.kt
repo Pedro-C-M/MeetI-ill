@@ -24,11 +24,12 @@ class MainActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
-        }
+
 
         val navController = findNavController(R.id.fragmentContainer)
 
         binding.customBar.perfilBtn.setOnClickListener {
+            // Para que no pete, solo funciona si estamos en home fragment
             val currentFragment = navController.currentDestination?.id
             if (currentFragment == R.id.homeFragment) {
                 val action = HomeFragmentDirections.actionHomeFragmentToProfileFragment()

@@ -55,7 +55,6 @@ dependencies {
     //Para la bd
     implementation(libs.firebase.firestore)
 
-
     implementation(libs.material.v190)
 
     implementation(libs.coil)
@@ -71,7 +70,7 @@ dependencies {
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.firebase.storage.ktx)
+    implementation(libs.firebase.database.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

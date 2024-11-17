@@ -3,13 +3,11 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Usuario(
-
+data class User(
+    var idUsuario: String,
     var nombreUsuario: String,
     var nombreReal: String,
-    var email: String,
-    var patologia1: String,
-    var patologia2: String,
-    var patologia3: String,
+    var grupsIds: MutableList<String>,
+    var patologias: MutableList<String>,
     var imagenPerfil: String // URI o URL de la imagen de perfil
 ) : Parcelable
