@@ -24,7 +24,8 @@ class GroupRepository {
             return Grupo(
                 titulo = document.getString("nombre")?:"Sin título",
                 numeroDeIntegrantes = (document.get("participantes") as? List<String>)?.count() ?: 0,
-                urlImagen = resourceId
+                urlImagen = resourceId,
+                idGrupo = groupId
             )
 
         } catch (e: Exception) {

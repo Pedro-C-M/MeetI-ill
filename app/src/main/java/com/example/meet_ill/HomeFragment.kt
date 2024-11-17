@@ -54,7 +54,7 @@ class HomeFragment : Fragment() {
             val user: User? = userRepo.getUserById(FirebaseAuth.getInstance().currentUser?.uid.toString())
             val listaGrupos: MutableList<Grupo> = mutableListOf()
 
-            if (user != null && user.grupsIds.isNotEmpty()) {
+            if (user != null) {
                 val deferredGrupos = user.grupsIds.map { groupId ->
                     async {
                         // Intentamos obtener cada grupo
@@ -89,25 +89,5 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-    }
-
-    private fun crearGrupos(): List<Grupo> {
-        return listOf(
-            Grupo(
-                titulo = "Grupo de pie",
-                numeroDeIntegrantes = 5,
-                urlImagen = R.drawable.fondo1
-            ),
-            Grupo(
-                titulo = "Grupo de pata",
-                numeroDeIntegrantes = 3,
-                urlImagen = R.drawable.fondo2
-            ),
-            Grupo(
-                titulo = "Grupo de patonas",
-                numeroDeIntegrantes = 7,
-                urlImagen = R.drawable.fondo3
-            )
-        )
     }
 }
