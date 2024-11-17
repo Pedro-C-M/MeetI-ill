@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.meet_ill.adapters.GroupAdapter
 import com.example.meet_ill.data_classes.Grupo
@@ -69,15 +70,16 @@ class HomeFragment : Fragment() {
                     Log.e("Error", "Error obteniendo los grupos", e)
                     emptyList<Grupo>() // Retornamos una lista vacía si hay algún error
                 }
-
-                // Filtramos los resultados nulos y los añadimos a la lista
                 listaGrupos.addAll(grupos.filterNotNull())
-
+                //Aqui meto por si acaso no hubo grupos un card indicandolo
+                if(user.grupsIds.isEmpty()){
+                    listaGrupos.add(crearCardSinGrupos())
+                }
                 // Volvemos al hilo principal para actualizar la UI
                 withContext(Dispatchers.Main) {
-                    // Actualizamos el RecyclerView con los grupos obtenidos
+                        // Actualizamos el RecyclerView con los grupos obtenidos
                     binding.recyclerGrupos.layoutManager = GridLayoutManager(requireContext(), 2)
-                    binding.recyclerGrupos.adapter = GroupAdapter(listaGrupos) { grupo ->
+                    binding.recyclerGrupos.adapter = GroupAdapter(findNavController(),listaGrupos) { grupo ->
                         // Acción cuando se selecciona un grupo
                     }
                 }
@@ -89,5 +91,14 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+    }
+    //Si no hay grupo aqui creo un card que en verdad es un grupo indicandolo
+    private fun crearCardSinGrupos(): Grupo {
+        return Grupo(
+            titulo = "Sin grupos aún",
+            idGrupo = "",
+            numeroDeIntegrantes = -1,
+            urlImagen = R.drawable.fondo1
+        )
     }
 }
