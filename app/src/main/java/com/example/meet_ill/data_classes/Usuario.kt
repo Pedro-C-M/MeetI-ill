@@ -1,4 +1,4 @@
-package com.example.meet_ill
+package com.example.meet_ill.data_classes
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 

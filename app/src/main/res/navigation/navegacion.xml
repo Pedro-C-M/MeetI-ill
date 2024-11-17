@@ -45,7 +45,7 @@
             app:destination="@id/profileFragment" />
         <argument
             android:name="usuario"
-            app:argType="com.example.meet_ill.Usuario" />
+            app:argType="com.example.meet_ill.data_classes.Usuario" />
     </fragment>
     <fragment
 
@@ -59,6 +59,6 @@
             app:destination="@id/profileEditFragment" />
         <argument
             android:name="usuario"
-            app:argType="com.example.meet_ill.Usuario" />
+            app:argType="com.example.meet_ill.data_classes.Usuario" />
     </fragment>
 </navigation>
