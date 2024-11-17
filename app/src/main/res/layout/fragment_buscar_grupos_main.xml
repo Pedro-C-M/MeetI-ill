@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <!-- Opciones de filtro -->
+
     <RadioGroup
         android:id="@+id/rgFilters"
         android:layout_width="wrap_content"
@@ -14,13 +15,13 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints">
 
         <RadioButton
             android:id="@+id/rbSuggested"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"
             android:text="Sugeridos"
             android:textSize="20sp" />
 
@@ -28,6 +29,7 @@
             android:id="@+id/rbAll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:checked="true"
             android:layout_marginStart="16dp"
             android:text="Todos"
             android:textSize="20sp" />
@@ -63,6 +65,8 @@
         app:layout_constraintTop_toBottomOf="@id/divider"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:listitem="@layout/item_group" />
+        app:layout_constraintBottom_toBottomOf="parent">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,7 +14,7 @@ import com.example.meet_ill.databinding.RecyclerContactoItem2Binding
 
 class FilteredGroupAdapter(
     val navController: NavController,
-    val listaGrupos: List<Grupo>,
+    var listaGrupos: List<Grupo>,
     //Añadir aquí la info que se pasa al listener en el futuro
 
 ): RecyclerView.Adapter<FilteredGroupAdapter.ViewHolder>() {
@@ -42,6 +42,10 @@ class FilteredGroupAdapter(
         }
     }
 
+    fun updateList(newList: List<Grupo>) {
+        listaGrupos = newList
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = RecyclerContactoItem2Binding.inflate(LayoutInflater.from(parent.context), parent, false)
