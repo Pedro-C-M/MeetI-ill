@@ -43,9 +43,9 @@ class ProfileFragment : Fragment() {
         //Saco los valores del usuario....
         tvUsername.text=argumentos.usuario.nombreUsuario
         tvRealName.text=argumentos.usuario.nombreReal
-        tvPatologia1.text=argumentos.usuario.patologia1
-        tvPatologia2.text=argumentos.usuario.patologia2
-        tvPatologia3.text=argumentos.usuario.patologia3
+        tvPatologia1.text=argumentos.usuario.patologias.get(0)
+        tvPatologia2.text=argumentos.usuario.patologias.get(1)
+        tvPatologia3.text=argumentos.usuario.patologias.get(2)
         //val uri = Uri.parse(argumentos.usuario.imagenPerfil)
         //imgProfile.setImageURI(uri)
         imgProfile.setImageResource(R.drawable.default_profile_image)

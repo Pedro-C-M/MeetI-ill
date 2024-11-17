@@ -7,7 +7,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.findNavController
 import com.example.meet_ill.databinding.ActivityMainBinding
-import com.example.meet_ill.data_classes.Usuario
+import com.example.meet_ill.data_classes.User
 
 
 class MainActivity : AppCompatActivity() {
@@ -26,8 +26,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val usuario = Usuario("Paquillo1","Paco Menen","Sida",
-            "VIH","Fibromialgia", "Lupus")
+        val usuario = User("Paquillo1","Paco Menen","Braulio", mutableListOf(),mutableListOf(),"")
 
         val navController = findNavController(R.id.fragmentContainer)
 
