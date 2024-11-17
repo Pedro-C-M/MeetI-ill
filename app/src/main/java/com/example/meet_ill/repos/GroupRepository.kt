@@ -3,9 +3,16 @@ package com.example.meet_ill.repos
 import android.content.Context
 import android.util.Log
 import com.example.meet_ill.data_classes.Grupo
+import com.example.meet_ill.data_classes.Message
 import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class GroupRepository {
 
@@ -32,6 +39,55 @@ class GroupRepository {
             Log.e("Repos", "Error al obtener el grupo", e)
             null
         }
+    }
+
+    suspend fun getMessageById(groupId : String):MutableList<Message>?{
+        val messages = mutableListOf<Message>()
+        try {
+            val document = db.document(groupId).collection("mensajesGrupo").
+            orderBy("timeSent", Query.Direction.ASCENDING).get().await()
+            for(message in document){
+                val sender = message.getString("sender")
+                val text = message.getString("texto")
+
+                if(sender.toString().equals(FirebaseAuth.getInstance().currentUser?.uid.toString())) {
+                    val message = Message(text.toString(), false)
+                    messages.add(message)
+                }
+                else{
+                    val message = Message(text.toString(), true)
+                    messages.add(message)
+                }
+
+            }
+
+        } catch (e: Exception) {
+            Log.e("Firebase", "Error al obtener el grupo", e)
+            null
+        }
+        return messages;
+    }
+
+
+
+    suspend fun addMessage(content : String, groupId: String){
+        try {
+            val document = db.document(groupId).collection("mensajesGrupo").document()
+
+            document.set(
+                hashMapOf(
+                    "sender" to FirebaseAuth.getInstance().currentUser?.uid.toString(),
+                    "texto" to content,
+                    "timeSent" to Timestamp.now()
+                )
+            ).await()
+
+
+        } catch (e: Exception) {
+            Log.e("Firebase", "Error al enviar el mensaje", e)
+            null
+        }
+
     }
     suspend fun getAllGroups(context:Context):MutableList<Grupo>{
         val gruposList = mutableListOf<Grupo>()
