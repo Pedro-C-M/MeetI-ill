@@ -53,6 +53,7 @@ class ProfileEditFragment : Fragment()  {
         spnPatologia2 = view.findViewById(R.id.spnPatologia2)
         spnPatologia3 = view.findViewById(R.id.spnPatologia3)
         btnSave = view.findViewById(R.id.btnSave)
+        imgProfile.setImageResource(R.drawable.default_profile_image)
 
         // Imagen de perfil (click para seleccionar)
         imgProfile.setOnClickListener {
@@ -62,7 +63,27 @@ class ProfileEditFragment : Fragment()  {
         // Rellenar spinners
         rellenaPatologias()
 
+        rellenaHints()
+
         return view
+    }
+
+    private fun rellenaHints() {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+
+        if (currentUser != null) {
+            val userId = currentUser.uid
+
+            FirebaseFirestore.getInstance().collection("users")
+                .document(userId)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document != null) {
+                        etUsername.hint = document.getString("apodo") ?: "Apodo"
+                        etRealName.hint = document.getString("name") ?: "Nombre real"
+                    }
+                }
+        }
     }
 
     private fun seleccionarImagen() {
@@ -73,16 +94,14 @@ class ProfileEditFragment : Fragment()  {
         startActivityForResult(intent, 100)
     }
 
-    private fun uploadImage(){
+    private fun uploadImage(userId: String) {
         val progressDialog = ProgressDialog(requireContext())
         progressDialog.setMessage("Uploading File...")
         progressDialog.setCancelable(false)
         progressDialog.show()
 
-        val formatter=SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.getDefault())
-        val now= Date()
-        val fileName = formatter.format(now)
-        val storageReference = FirebaseStorage.getInstance().getReference("images/$fileName")
+        // Usar la userId para crear el nombre del archivo
+        val storageReference = FirebaseStorage.getInstance().getReference("images/$userId.jpg")
 
         storageReference.putFile(selectedImageUri).
                     addOnSuccessListener {
@@ -161,10 +180,8 @@ class ProfileEditFragment : Fragment()  {
                     return@setOnClickListener
                 }
 
-                // Si se seleccionó una imagen, incluir su URI en las actualizaciones
-                selectedImageUri?.let { uri ->
-                    updates["imagenPerfil"] = uri.toString()
-                }
+                // Subir la imagen
+                //uploadImage(userId)
 
                 // Si no hay nada que actualizar, no hacer nada
                 if (updates.isEmpty()) {

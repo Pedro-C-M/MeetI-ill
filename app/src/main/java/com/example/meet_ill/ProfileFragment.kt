@@ -87,7 +87,7 @@ class ProfileFragment : Fragment() {
                         tvPatologia2.text =  document.getString("patologia2") ?: "N/A"
                         tvPatologia3.text =  document.getString("patologia3") ?: "N/A"
 
-                        val imageUrl = document.getString("imagenPerfil")
+                        val imageUrl = ""
                         if (!imageUrl.isNullOrEmpty()) {
                             // Obtener el archivo desde Firebase Storage
                             val storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl)
