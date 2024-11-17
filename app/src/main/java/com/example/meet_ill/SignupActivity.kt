@@ -1,11 +1,8 @@
 package com.example.meet_ill
 
 import android.content.Intent
-
-
 import android.os.Bundle
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -17,79 +14,77 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import java.util.Arrays
 
-class LoginActivity : AppCompatActivity() {
-    private lateinit var emailEditText: TextInputEditText
-    private lateinit var passwordEditText: TextInputEditText
-    private lateinit var signUpButton: Button
-    private lateinit var logInButton: Button
-    private lateinit var imageIcon: ImageView
+class SignupActivity : AppCompatActivity() {
 
     private lateinit var launcher : ActivityResultLauncher<Intent>
+    private lateinit var emailEditText: TextInputEditText
+    private lateinit var passwordEditText: TextInputEditText
+    private lateinit var nicknameEditText: TextInputEditText
+    private lateinit var nameEditText: TextInputEditText
+    private lateinit var signUpButton: Button
+    private lateinit var imageIcon: ImageView
+    private lateinit var backButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_signup)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         initVars()
-        comprobarUsuarioLogeado()
     }
 
-    private fun comprobarUsuarioLogeado() {
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        if(currentUser != null){
-            showHome(currentUser.email.toString())
-        }
-    }
 
-    private fun initVars() {
+    private fun initVars(){
         emailEditText = findViewById(R.id.emailEditText)
         passwordEditText = findViewById(R.id.editTextPassword)
+        nicknameEditText = findViewById(R.id.nicknameEditText)
+        nameEditText = findViewById(R.id.realNameEditText)
         signUpButton = findViewById(R.id.signUpButton)
-        logInButton = findViewById(R.id.logInButton)
         imageIcon = findViewById(R.id.logoImageView)
         imageIcon.setImageResource(R.drawable.meetill)
-
+        backButton = findViewById(R.id.backButton)
         launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ resultado ->
-            clearInputs()
+            //clearInputs()
 
             var devuelto = resultado.data?.getStringExtra("despido")
             Toast.makeText(this, devuelto, Toast.LENGTH_LONG).show()
         }
 
-
-        signUpButton.setOnClickListener{
-            val intent = Intent(applicationContext, SignupActivity::class.java)
+        backButton.setOnClickListener {
+            val intent = Intent(applicationContext, LoginActivity::class.java)
             launcher.launch(intent)
         }
 
-        logInButton.setOnClickListener{
-            if(emailEditText.text!!.isNotEmpty() && passwordEditText.text!!.isNotEmpty()){//Como es asincrono el createUser le ponemos una funcion callback que es el listener
+
+        signUpButton.setOnClickListener{
+            if(emailEditText.text!!.isNotEmpty()  && passwordEditText.text!!.isNotEmpty()
+                && nicknameEditText.text!!.isNotEmpty() && nameEditText.text!!.isNotEmpty()){//Como es asincrono el createUser le ponemos una funcion callback que es el listener
                 FirebaseAuth.getInstance()
-                    .signInWithEmailAndPassword(
-                        emailEditText.text.toString()
-                        ,passwordEditText.text.toString())
-                    .addOnCompleteListener{//El parametro que nos llega se llama it (this de los lambdas), podemo poner otro nombre con result -> como normal vaya
-                        if(it.isSuccessful){
-                            showHome(emailEditText.text.toString())
-                        }else{
-                            showAlert()
-                        }
-                    }
+                            .createUserWithEmailAndPassword(
+                            emailEditText.text.toString()
+                            ,passwordEditText.text.toString())
+                        .addOnCompleteListener{//El parametro que nos llega se llama it (this de los lambdas), podemo poner otro nombre con result -> como normal vaya
+            if(it.isSuccessful){
+            showHome(emailEditText.text.toString())
+             añadirUsuario()
+            }
+            else{
+                showAlert()
+                }
+            }
             }
         }
+
     }
 
-    private fun clearInputs() {
-        //Borramos los campos
-        emailEditText.text!!.clear()
-        passwordEditText.text!!.clear()
-    }
 
     private fun showHome(emailStr: String) {
         val intent = Intent(applicationContext, MainActivity::class.java)
@@ -106,5 +101,15 @@ class LoginActivity : AppCompatActivity() {
         val dialog: AlertDialog = builder.create()
         dialog.show()
 
+    }
+
+    private fun añadirUsuario(){
+         val db = FirebaseFirestore.getInstance()
+        db.collection("users").document().set(hashMapOf(
+            "apodo" to nicknameEditText.text.toString(),
+            "email" to emailEditText.text.toString(),
+            "name" to nameEditText.text.toString(),
+        "groupsIds2" to mutableListOf<String>()
+        ))
     }
 }
