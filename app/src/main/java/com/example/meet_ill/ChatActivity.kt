@@ -86,10 +86,15 @@ class ChatActivity : AppCompatActivity() {
 
         bSendMessage.setOnClickListener{
             lifecycleScope.launch(Dispatchers.IO) {
-                groupRepo.addMessage(eTMessage.text.toString(),grupo.idGrupo)
-                cargarMensajes(grupo)
+                groupRepo.addMessage(eTMessage.text.toString(), grupo.idGrupo)
+
+
+                withContext(Dispatchers.Main) {
+                    cargarMensajes(grupo)
+                    eTMessage.text.clear()
+                }
             }
-            eTMessage.text.clear()
+
         }
 
         bBack.setOnClickListener{
