@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:padding="8dp">
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        >
+
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:background="@drawable/message2"
+        android:background="@drawable/message"
         android:padding="12dp">
 
-
-        <TextView
-            android:id="@+id/tvName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:text="Nombre del usuario"
-            android:textSize="14sp"
-            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvMessage"
@@ -31,13 +31,28 @@
             android:text="Contenido del mensaje"
             android:textSize="14sp" />
 
+
         <TextView
             android:id="@+id/tvMessageTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="end"
+            android:gravity="start"
             android:text="12:34 PM"
             android:textColor="@android:color/darker_gray"
             android:textSize="12sp" />
     </LinearLayout>
-</LinearLayout>
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:gravity="end"
+        android:text="Nombre del usuario"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+</FrameLayout>

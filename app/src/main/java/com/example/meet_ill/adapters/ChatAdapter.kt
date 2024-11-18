@@ -12,30 +12,35 @@ class ChatAdapter(val listaMessages: List<Message>): RecyclerView.Adapter<ChatAd
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){
         private var tvMessage: TextView = view.findViewById(R.id.tvMessage)
-        private var tvName: TextView = view.findViewById(R.id.tvName)
+        private  var tvName: TextView = view.findViewById(R.id.tvName)
+        private var tvFecha: TextView = view.findViewById(R.id.tvMessageTime)
         private var message: Message? = null
 
 
 
         fun bind(message: Message){
             tvMessage.text = message.content
+            tvFecha.text = message.fecha
             if(message.isReceived) {
-                tvMessage.textAlignment = View.TEXT_ALIGNMENT_TEXT_START
-                tvName.text = "Contacto x"
-                tvName.textAlignment = View.TEXT_ALIGNMENT_TEXT_START
+                tvName.text = message.user
             }
-            else {
-                tvMessage.textAlignment = View.TEXT_ALIGNMENT_TEXT_END
-                tvName.text = "Yo"
-                tvName.textAlignment = View.TEXT_ALIGNMENT_TEXT_END
+            else{
+                tvName.text=""
             }
+
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val layoutElement = R.layout.recycler_message_item
-
-        val view = LayoutInflater.from(parent.context).inflate(layoutElement,parent,false)
+        lateinit var view: View;
+        if(viewType==1){
+             view = LayoutInflater.from(parent.context).inflate(
+                R.layout.recycler_message_receiver_item,parent,false)
+        }
+        else{
+            view = LayoutInflater.from(parent.context).inflate(
+                R.layout.recycler_message_item,parent,false)
+        }
 
         return ViewHolder(view)
     }
@@ -46,5 +51,17 @@ class ChatAdapter(val listaMessages: List<Message>): RecyclerView.Adapter<ChatAd
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(listaMessages[position])
+    }
+
+    override fun getItemViewType(position: Int): Int {
+
+        if (listaMessages.get(position) != null) {
+
+            if (!listaMessages.get(position).isReceived)
+                return 1;
+            else
+                return -1;
+        }
+        return -1;
     }
 }

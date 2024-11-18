@@ -14,9 +14,10 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import androidx.lifecycle.lifecycleScope
+import com.example.meet_ill.repos.UserRepository
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.launch
 
 
 class ProfileEditActivity : AppCompatActivity() {
@@ -32,10 +33,12 @@ class ProfileEditActivity : AppCompatActivity() {
     private lateinit var spinnersContainer: LinearLayout
     private val spinnerList = mutableListOf<Spinner>()
 
+    private val userRepository = UserRepository()
+    private lateinit var currentUserId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.fragment_edit_profile)
+        setContentView(R.layout.activity_profile_edit)
 
 
         imgProfile = findViewById(R.id.imgProfile)
@@ -43,11 +46,11 @@ class ProfileEditActivity : AppCompatActivity() {
         etRealName = findViewById(R.id.etRealName)
         btnSave = findViewById(R.id.btnSave)
         imgProfile.setImageResource(R.drawable.default_profile_image)
-
-
         spinnersContainer = findViewById(R.id.spinnersContainer)
         btnAddSpinner = findViewById(R.id.btnAddSpinner)
         btnRemoveSpinner = findViewById(R.id.btnRemoveSpinner)
+
+        currentUserId = userRepository.getCurrentUserId() ?: ""
 
         btnAddSpinner.setOnClickListener {
             if (spinnerList.size < 5) {
@@ -75,98 +78,95 @@ class ProfileEditActivity : AppCompatActivity() {
     }
 
 
-    private fun guardarCambios(){
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser == null) {
-            Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
-            return
-        }
-        val userId = currentUser.uid
-        val db = FirebaseFirestore.getInstance()
-
+    private fun guardarCambios() {
         //Lo pongo por si modificamos unos campos y otros no
         val updates = mutableMapOf<String, Any>()
 
         val username = etUsername.text.toString()
-        if (username.isNotEmpty()) {
-            updates["apodo"] = username
-        }
+        if (username.isNotEmpty()) updates["apodo"] = username
+
         val realName = etRealName.text.toString()
-        if (realName.isNotEmpty()) {
-            updates["name"] = realName
-        }
+        if (realName.isNotEmpty()) updates["name"] = realName
 
-        val patologiasSeleccionadas = mutableListOf<String>()
+        val patologiasSeleccionadas = spinnerList.map { it.selectedItem.toString() }
 
-        for (spinner in spinnerList) {
-            val selectedPatologia = spinner.selectedItem.toString()
-            if (selectedPatologia.isNotEmpty()) {
-                patologiasSeleccionadas.add(selectedPatologia)
-            }
-        }
-
-        if (patologiasSeleccionadas.size == patologiasSeleccionadas.distinct().size) {
-            for (i in 0 until 5) {
-                if (i < patologiasSeleccionadas.size) {
-                    if (patologiasSeleccionadas[i].isNotEmpty()) {
-                        updates["patologia${i + 1}"] = patologiasSeleccionadas[i]
-                    } else {
-                        updates["patologia${i + 1}"] = ""
-                    }
-                } else {
-                    updates["patologia${i + 1}"] = ""
-                }
-            }
-        } else {
+        if (patologiasSeleccionadas.size != patologiasSeleccionadas.distinct().size) {
             Toast.makeText(this, "Las patologías no pueden repetirse", Toast.LENGTH_SHORT).show()
             return
         }
+        if (patologiasSeleccionadas.isNotEmpty()) updates["patologias"] = patologiasSeleccionadas
 
         // Subir la imagen. todo: lo quitamos por ahora
         //uploadImage(userId)
-
 
         if (updates.isEmpty()) {
             Toast.makeText(this, "No hay cambios para guardar", Toast.LENGTH_SHORT).show()
             return
         }
 
-        db.collection("users").document(userId)
-            .update(updates)
-            .addOnSuccessListener {
+        userRepository.updateUser(currentUserId, updates,
+            onSuccess = {
                 Toast.makeText(this, "Perfil actualizado con éxito", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, ProfileActivity::class.java)
                 startActivity(intent)
-            }
-            .addOnFailureListener {
+            },
+            onFailure = {
                 Toast.makeText(this, "Error al actualizar el perfil", Toast.LENGTH_SHORT).show()
             }
+        )
 
     }
+
     private fun createSpinner(): Spinner {
-        val patologias = listOf("Diabetes", "VIH", "Hipertensión", "Asma", "Artritis", "Epilepsia",
-            "Alzheimer", "Parkinson", "Esclerosis múltiple", "Cáncer", "Enfermedad cardíaca", "EPOC",
-            "Insuficiencia renal", "Fibromialgia", "Lupus", "Anemia", "Migraña", "Obesidad",
-            "Hipotiroidismo", "Alergias"
+        val patologias = listOf(
+            "Diabetes",
+            "VIH",
+            "Hipertensión",
+            "Asma",
+            "Artritis",
+            "Epilepsia",
+            "Alzheimer",
+            "Parkinson",
+            "Esclerosis múltiple",
+            "Cáncer",
+            "Enfermedad cardíaca",
+            "EPOC",
+            "Insuficiencia renal",
+            "Fibromialgia",
+            "Lupus",
+            "Anemia",
+            "Migraña",
+            "Obesidad",
+            "Hipotiroidismo",
+            "Alergias"
         )
         val spinner = Spinner(this)
 
-        val adapter = object : ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, patologias) {
-            override fun getView(position: Int, convertView: android.view.View?, parent: android.view.ViewGroup): android.view.View {
-                val view = super.getView(position, convertView, parent)
-                val textView = view as TextView
-                textView.textSize = 19f
-                textView.setPadding(20, 20, 20, 20)
-                return view
-            }
+        val adapter =
+            object : ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, patologias) {
+                override fun getView(
+                    position: Int,
+                    convertView: android.view.View?,
+                    parent: android.view.ViewGroup
+                ): android.view.View {
+                    val view = super.getView(position, convertView, parent)
+                    val textView = view as TextView
+                    textView.textSize = 19f
+                    textView.setPadding(20, 20, 20, 20)
+                    return view
+                }
 
-            override fun getDropDownView(position: Int, convertView: android.view.View?, parent: android.view.ViewGroup): android.view.View {
-                val view = super.getDropDownView(position, convertView, parent)
-                val textView = view as TextView
-                textView.textSize = 25f
-                return view
+                override fun getDropDownView(
+                    position: Int,
+                    convertView: android.view.View?,
+                    parent: android.view.ViewGroup
+                ): android.view.View {
+                    val view = super.getDropDownView(position, convertView, parent)
+                    val textView = view as TextView
+                    textView.textSize = 25f
+                    return view
+                }
             }
-        }
 
         spinner.adapter = adapter
 
@@ -174,46 +174,33 @@ class ProfileEditActivity : AppCompatActivity() {
     }
 
     private fun rellenaHints() {
-        val currentUser = FirebaseAuth.getInstance().currentUser
 
-        if (currentUser != null) {
-            val userId = currentUser.uid
+        lifecycleScope.launch() {
+            val user = userRepository.getUserById(currentUserId)
+            if (user != null) {
+                etUsername.hint = user.nombreUsuario
+                etRealName.hint = user.nombreReal
 
-            FirebaseFirestore.getInstance().collection("users")
-                .document(userId)
-                .get()
-                .addOnSuccessListener { document ->
-                    if (document != null) {
-                        etUsername.hint = document.getString("apodo") ?: "Apodo"
-                        etRealName.hint = document.getString("name") ?: "Nombre real"
-
-                        val patologias = mutableListOf<String>()
-                        for (i in 1..5) {
-                            val patologia = document.getString("patologia$i")
-                            if (!patologia.isNullOrEmpty()) {
-                                patologias.add(patologia)
-                            }
-                        }
-                        for (i in 0 until patologias.size) {
-                            val newSpinner = createSpinner()
-                            spinnerList.add(newSpinner)
-                            spinnersContainer.addView(newSpinner)
-                        }
-
-                        // Rellenar los spinners si hay patologías existentes
-                        for (i in 0 until patologias.size) {
-                            if (i < spinnerList.size) {
-                                val spinner = spinnerList[i]
-                                val adapter = spinner.adapter as ArrayAdapter<String>
-                                val position = adapter.getPosition(patologias[i])
-                                spinner.setSelection(position)
-                            }
-                        }
+                user.patologias.forEach {
+                    val spinner = createSpinner()
+                    spinnerList.add(spinner)
+                    spinnersContainer.addView(spinner)
+                }
+                for (i in 0 until  user.patologias.size) {
+                    if (i < spinnerList.size) {
+                        val spinner = spinnerList[i]
+                        val adapter = spinner.adapter as ArrayAdapter<String>
+                        val position = adapter.getPosition(user.patologias[i])
+                        spinner.setSelection(position)
                     }
                 }
+            }
         }
+
     }
 
+
+    //todo Lo de abjo: Cosas para el tema de subir imagenes
     private fun seleccionarImagen() {
         val intent = Intent()
         intent.type = "image/*"
@@ -221,6 +208,7 @@ class ProfileEditActivity : AppCompatActivity() {
 
         startActivityForResult(intent, 100)
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -242,15 +230,14 @@ class ProfileEditActivity : AppCompatActivity() {
         // Usar la userId para crear el nombre del archivo
         val storageReference = FirebaseStorage.getInstance().getReference("images/$userId.jpg")
 
-        storageReference.putFile(selectedImageUri).
-                    addOnSuccessListener {
+        storageReference.putFile(selectedImageUri).addOnSuccessListener {
 
-                        imgProfile.setImageURI(null)
-                        Toast.makeText(this, "Successfully Uploaded", Toast.LENGTH_SHORT).show()
-                        if(progressDialog.isShowing) progressDialog.dismiss()
-                    }.addOnFailureListener{
-                        if(progressDialog.isShowing) progressDialog.dismiss()
-                        Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
+            imgProfile.setImageURI(null)
+            Toast.makeText(this, "Successfully Uploaded", Toast.LENGTH_SHORT).show()
+            if (progressDialog.isShowing) progressDialog.dismiss()
+        }.addOnFailureListener {
+            if (progressDialog.isShowing) progressDialog.dismiss()
+            Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
         }
     }
 

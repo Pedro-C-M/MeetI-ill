@@ -10,6 +10,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.util.Locale
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -42,6 +44,9 @@ class GroupRepository {
     }
 
     suspend fun getMessageById(groupId : String):MutableList<Message>?{
+
+
+
         val messages = mutableListOf<Message>()
         try {
             val document = db.document(groupId).collection("mensajesGrupo").
@@ -49,13 +54,22 @@ class GroupRepository {
             for(message in document){
                 val sender = message.getString("sender")
                 val text = message.getString("texto")
+                val timestamp = message.getTimestamp("timeSent")
+                val date = timestamp?.toDate()
+                val formatter = SimpleDateFormat("hh:mm a", Locale.getDefault())
+                val formattedTime = formatter.format(date)
+
+                val usuario =Firebase.firestore.collection("users").document(sender!!).get().await()
+
+                val nombre = usuario.getString("apodo")
+
 
                 if(sender.toString().equals(FirebaseAuth.getInstance().currentUser?.uid.toString())) {
-                    val message = Message(text.toString(), false)
+                    val message = Message(text.toString(), false,nombre.toString(),formattedTime,"")
                     messages.add(message)
                 }
                 else{
-                    val message = Message(text.toString(), true)
+                    val message = Message(text.toString(), true,nombre.toString(),formattedTime,"")
                     messages.add(message)
                 }
 
@@ -71,6 +85,7 @@ class GroupRepository {
 
 
     suspend fun addMessage(content : String, groupId: String){
+
         try {
             val document = db.document(groupId).collection("mensajesGrupo").document()
 
@@ -87,6 +102,8 @@ class GroupRepository {
             Log.e("Firebase", "Error al enviar el mensaje", e)
             null
         }
+
+
 
     }
     suspend fun getAllGroups(context:Context):MutableList<Grupo>{
