@@ -7,6 +7,7 @@ import com.example.meet_ill.data_classes.Message
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
@@ -76,7 +77,7 @@ class GroupRepository {
             }
 
         } catch (e: Exception) {
-            Log.e("Firebase", "Error al obtener el grupo", e)
+            Log.e("Repos", "Error al obtener el grupo", e)
             null
         }
         return messages;
@@ -99,7 +100,7 @@ class GroupRepository {
 
 
         } catch (e: Exception) {
-            Log.e("Firebase", "Error al enviar el mensaje", e)
+            Log.e("Repos", "Error al enviar el mensaje", e)
             null
         }
 
@@ -132,6 +133,14 @@ class GroupRepository {
         catch (e: Exception) {
             Log.e("Repos", "Error al obtener los grupos", e)
             mutableListOf()  // Retorna una lista vacía si ocurre un error
+        }
+    }
+
+    suspend fun meterParticipante(idGrupo: String, idUsuario: String) {
+        try {
+            db.document(idGrupo).update("participantes", FieldValue.arrayUnion(idUsuario)).await()
+        } catch (e: Exception) {
+            Log.e("Repos", "Error al meter usuario a grupo", e)
         }
     }
 }

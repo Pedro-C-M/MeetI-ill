@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.meet_ill.data_classes.User
 import com.example.meet_ill.util.AuthSingleton.auth
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
 
@@ -32,6 +33,14 @@ class UserRepository {
         } catch (e: Exception) {
             Log.e("Repos", "Error al obtener el usuario", e)
             null
+        }
+    }
+
+    suspend fun unirGrupo(idUsuario: String, idGrupo: String) {
+        try {
+            db.document(idUsuario).update("groupsIds", FieldValue.arrayUnion(idGrupo)).await()
+        } catch (e: Exception) {
+            Log.e("Repos", "Error al meter grupo al usuario", e)
         }
     }
 
