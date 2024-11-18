@@ -17,13 +17,14 @@ import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 
 
-class ProfileEditFragment : Fragment()  {
+class ProfileEditActivity : AppCompatActivity() {
     private lateinit var imgProfile: ImageView
     private lateinit var etUsername: EditText
     private lateinit var etRealName: EditText
@@ -37,25 +38,22 @@ class ProfileEditFragment : Fragment()  {
     private val spinnerList = mutableListOf<Spinner>()
 
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.fragment_edit_profile)
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflar el diseño del fragmento
-        val view = inflater.inflate(R.layout.fragment_edit_profile, container, false)
 
         // Inicializar vistas
-        imgProfile = view.findViewById(R.id.imgProfile)
-        etUsername = view.findViewById(R.id.etUsername)
-        etRealName = view.findViewById(R.id.etRealName)
-        btnSave = view.findViewById(R.id.btnSave)
+        imgProfile = findViewById(R.id.imgProfile)
+        etUsername = findViewById(R.id.etUsername)
+        etRealName = findViewById(R.id.etRealName)
+        btnSave = findViewById(R.id.btnSave)
         imgProfile.setImageResource(R.drawable.default_profile_image)
 
 
-        spinnersContainer = view.findViewById(R.id.spinnersContainer)
-        btnAddSpinner = view.findViewById(R.id.btnAddSpinner)
-        btnRemoveSpinner = view.findViewById(R.id.btnRemoveSpinner)
+        spinnersContainer = findViewById(R.id.spinnersContainer)
+        btnAddSpinner = findViewById(R.id.btnAddSpinner)
+        btnRemoveSpinner = findViewById(R.id.btnRemoveSpinner)
 
         btnAddSpinner.setOnClickListener {
             if (spinnerList.size < 5) {
@@ -79,18 +77,86 @@ class ProfileEditFragment : Fragment()  {
 
         rellenaHints()
 
-        return view
+        btnSave.setOnClickListener { guardarCambios() }
     }
+    private fun guardarCambios(){
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val userId = currentUser.uid
+        val db = FirebaseFirestore.getInstance()
 
+        //Lo pongo por si modificamos unos campos y otros no
+        val updates = mutableMapOf<String, Any>()
+
+        val username = etUsername.text.toString()
+        if (username.isNotEmpty()) {
+            updates["apodo"] = username
+        }
+        val realName = etRealName.text.toString()
+        if (realName.isNotEmpty()) {
+            updates["name"] = realName
+        }
+
+        val patologiasSeleccionadas = mutableListOf<String>()
+
+        for (spinner in spinnerList) {
+            val selectedPatologia = spinner.selectedItem.toString()
+            if (selectedPatologia.isNotEmpty()) {
+                patologiasSeleccionadas.add(selectedPatologia)
+            }
+        }
+
+        if (patologiasSeleccionadas.size == patologiasSeleccionadas.distinct().size) {
+            for (i in 0 until 5) {
+                if (i < patologiasSeleccionadas.size) {
+                    if (patologiasSeleccionadas[i].isNotEmpty()) {
+                        updates["patologia${i + 1}"] = patologiasSeleccionadas[i]
+                    } else {
+                        updates["patologia${i + 1}"] = ""
+                    }
+                } else {
+                    updates["patologia${i + 1}"] = ""
+                }
+            }
+        } else {
+            Toast.makeText(this, "Las patologías no pueden repetirse", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Subir la imagen. todo: lo quitamos por ahora
+        //uploadImage(userId)
+
+        // Si no hay nada que actualizar, no hacer nada
+        if (updates.isEmpty()) {
+            Toast.makeText(this, "No hay cambios para guardar", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Actualizar Firestore
+        db.collection("users").document(userId)
+            .update(updates)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Perfil actualizado con éxito", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, ProfileActivity::class.java)
+                startActivity(intent)
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Error al actualizar el perfil", Toast.LENGTH_SHORT).show()
+            }
+
+    }
     private fun createSpinner(): Spinner {
         val patologias = listOf("Diabetes", "VIH", "Hipertensión", "Asma", "Artritis", "Epilepsia",
             "Alzheimer", "Parkinson", "Esclerosis múltiple", "Cáncer", "Enfermedad cardíaca", "EPOC",
             "Insuficiencia renal", "Fibromialgia", "Lupus", "Anemia", "Migraña", "Obesidad",
             "Hipotiroidismo", "Alergias"
         )
-        val spinner = Spinner(requireContext())
+        val spinner = Spinner(this)
         // Crear un ArrayAdapter con un TextView personalizado
-        val adapter = object : ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, patologias) {
+        val adapter = object : ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, patologias) {
             override fun getView(position: Int, convertView: android.view.View?, parent: android.view.ViewGroup): android.view.View {
                 val view = super.getView(position, convertView, parent)
                 val textView = view as TextView
@@ -137,9 +203,20 @@ class ProfileEditFragment : Fragment()  {
 
         startActivityForResult(intent, 100)
     }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
+            data?.data?.let {
+                selectedImageUri = it
+                imgProfile.setImageURI(selectedImageUri)
+            }
+        }
+    }
+
 
     private fun uploadImage(userId: String) {
-        val progressDialog = ProgressDialog(requireContext())
+        val progressDialog = ProgressDialog(this)
         progressDialog.setMessage("Uploading File...")
         progressDialog.setCancelable(false)
         progressDialog.show()
@@ -151,97 +228,13 @@ class ProfileEditFragment : Fragment()  {
                     addOnSuccessListener {
 
                         imgProfile.setImageURI(null)
-                        Toast.makeText(requireContext(), "Successfully Uploaded", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Successfully Uploaded", Toast.LENGTH_SHORT).show()
                         if(progressDialog.isShowing) progressDialog.dismiss()
                     }.addOnFailureListener{
                         if(progressDialog.isShowing) progressDialog.dismiss()
-                        Toast.makeText(requireContext(), "Failed", Toast.LENGTH_SHORT).show()
-        }
-    }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
-            selectedImageUri= data?.data!!
-            imgProfile.setImageURI(selectedImageUri)
+                        Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        btnSave.isEnabled = true
-        btnSave.setOnClickListener {
-            btnSave.setOnClickListener {
-                val currentUser = FirebaseAuth.getInstance().currentUser
-                if (currentUser == null) {
-                    Toast.makeText(requireContext(), "Usuario no autenticado", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-                val userId = currentUser.uid
-                val db = FirebaseFirestore.getInstance()
-
-                //Lo pongo por si modificamos unos campos y otros no
-                val updates = mutableMapOf<String, Any>()
-
-                val username = etUsername.text.toString()
-                if (username.isNotEmpty()) {
-                    updates["apodo"] = username
-                }
-                val realName = etRealName.text.toString()
-                if (realName.isNotEmpty()) {
-                    updates["name"] = realName
-                }
-
-                val patologiasSeleccionadas = mutableListOf<String>()
-
-                for (spinner in spinnerList) {
-                    val selectedPatologia = spinner.selectedItem.toString()
-                    if (selectedPatologia.isNotEmpty()) {
-                        patologiasSeleccionadas.add(selectedPatologia)
-                    }
-                }
-
-                if (patologiasSeleccionadas.size == patologiasSeleccionadas.distinct().size) {
-                    for (i in 0 until 5) {
-                        if (i < patologiasSeleccionadas.size) {
-                            if (patologiasSeleccionadas[i].isNotEmpty()) {
-                                updates["patologia${i + 1}"] = patologiasSeleccionadas[i]
-                            } else {
-                                updates["patologia${i + 1}"] = ""
-                            }
-                        } else {
-                            updates["patologia${i + 1}"] = ""
-                        }
-                    }
-                } else {
-                    Toast.makeText(requireContext(), "Las patologías no pueden repetirse", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-
-                // Subir la imagen. todo: lo quitamos por ahora
-                //uploadImage(userId)
-
-                // Si no hay nada que actualizar, no hacer nada
-                if (updates.isEmpty()) {
-                    Toast.makeText(requireContext(), "No hay cambios para guardar", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-
-                // Actualizar Firestore
-                db.collection("users").document(userId)
-                    .update(updates)
-                    .addOnSuccessListener {
-                        Toast.makeText(requireContext(), "Perfil actualizado con éxito", Toast.LENGTH_SHORT).show()
-                        findNavController().navigateUp()
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(requireContext(), "Error al actualizar el perfil", Toast.LENGTH_SHORT).show()
-                    }
-
-            }
-
-        }
-    }
 
 }

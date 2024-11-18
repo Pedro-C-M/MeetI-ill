@@ -1,5 +1,6 @@
 package com.example.meet_ill
 
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
@@ -11,14 +12,15 @@ import android.widget.TextView
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 
-class ProfileFragment : Fragment() {
+class ProfileActivity : AppCompatActivity() {
 
     private lateinit var imgProfile: ImageView
     private lateinit var tvUsername: TextView
@@ -26,24 +28,30 @@ class ProfileFragment : Fragment() {
     private lateinit var tvCorreo: TextView
     private lateinit var btnEditUser: Button
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflar el diseño del fragmento
-        val view = inflater.inflate(R.layout.fragment_profile_menu, container, false)
+    companion object {
+        const val REQUEST_CODE_EDIT_PROFILE = 1
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.fragment_profile_menu) // Usa el mismo layout por ahora
 
         // Inicializar vistas
-        imgProfile = view.findViewById(R.id.imgProfile)
-        tvUsername = view.findViewById(R.id.tvUsername)
-        tvRealName = view.findViewById(R.id.tvRealName)
-        tvCorreo = view.findViewById(R.id.tvCorreo)
-        btnEditUser = view.findViewById(R.id.btnEditUser)
+        imgProfile = findViewById(R.id.imgProfile)
+        tvUsername = findViewById(R.id.tvUsername)
+        tvRealName = findViewById(R.id.tvRealName)
+        tvCorreo = findViewById(R.id.tvCorreo)
+        btnEditUser = findViewById(R.id.btnEditUser)
 
 
         cargarDatosUsuario()
 
-        return view
+        btnEditUser.isEnabled = true
+        btnEditUser.setOnClickListener {
+            // Inicia una nueva actividad para editar el perfil
+            val intent = Intent(this, ProfileEditActivity::class.java)
+            startActivity(intent)
+        }
     }
 
 
@@ -71,12 +79,12 @@ class ProfileFragment : Fragment() {
                             document.getString("patologia5") ?: ""
                         )
 
-                        val layoutPatologias = view?.findViewById<LinearLayout>(R.id.linearLayoutPatologias)
+                        val layoutPatologias = findViewById<LinearLayout>(R.id.linearLayoutPatologias)
                         layoutPatologias?.removeAllViews()
 
                         for (patologia in patologias) {
                             if (patologia.isNotEmpty()) {
-                                val textView = TextView(requireContext())
+                                val textView = TextView(this)
                                 textView.text = patologia
                                 textView.textSize = 18f // Establecer tamaño de texto
                                 textView.setPadding(0, 5, 0, 5) // Añadir algo de espacio entre patologías
@@ -103,7 +111,7 @@ class ProfileFragment : Fragment() {
                                 .addOnFailureListener {
                                     // Error al descargar la imagen
                                     imgProfile.setImageResource(R.drawable.default_profile_image)
-                                    Toast.makeText(requireContext(), "Error al cargar la imagen", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this, "Error al cargar la imagen", Toast.LENGTH_SHORT).show()
                                 }
                         } else {
                             imgProfile.setImageResource(R.drawable.default_profile_image)
@@ -112,24 +120,10 @@ class ProfileFragment : Fragment() {
                     }
                 }
                 .addOnFailureListener {
-                    Toast.makeText(requireContext(), "Error al cargar los datos", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Error al cargar los datos", Toast.LENGTH_SHORT).show()
                 }
         } else {
-            Toast.makeText(requireContext(), "No se encontró usuario en sesión", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        btnEditUser.isEnabled = true
-        btnEditUser.setOnClickListener {
-            btnEditUser.setOnClickListener {
-
-                val destino = ProfileFragmentDirections.actionProfileFragmentToProfileEditFragment()
-                findNavController().navigate(destino)
-            }
-
+            Toast.makeText(this, "No se encontró usuario en sesión", Toast.LENGTH_SHORT).show()
         }
     }
 }
