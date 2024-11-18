@@ -1,5 +1,6 @@
 package com.example.meet_ill
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -9,7 +10,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.meet_ill.databinding.ActivityMainBinding
-import com.example.meet_ill.data_classes.User
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
@@ -29,17 +29,13 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val usuario = User("Paquillo1","Paco Menen","Braulio", mutableListOf(),mutableListOf(),"")
+
 
         val navController = findNavController(R.id.fragmentContainer)
 
-        binding.customBar.perfilBtn.setOnClickListener {
-            // Para que no pete, solo funciona si estamos en home fragment
-            val currentFragment = navController.currentDestination?.id
-            if (currentFragment == R.id.homeFragment) {
-                val action = HomeFragmentDirections.actionHomeFragmentToProfileFragment(usuario)
-                navController.navigate(action)
-            }
+        binding.customBar.perfilBtn.setOnClickListener { // Iniciar la nueva actividad
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
         }
 
         val bottomViewNav = findViewById<BottomNavigationView>(R.id.navBar)
