@@ -5,11 +5,7 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import android.widget.ImageView
-import androidx.fragment.app.Fragment
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -18,7 +14,6 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -43,7 +38,6 @@ class ProfileEditActivity : AppCompatActivity() {
         setContentView(R.layout.fragment_edit_profile)
 
 
-        // Inicializar vistas
         imgProfile = findViewById(R.id.imgProfile)
         etUsername = findViewById(R.id.etUsername)
         etRealName = findViewById(R.id.etRealName)
@@ -63,6 +57,7 @@ class ProfileEditActivity : AppCompatActivity() {
             }
         }
 
+
         btnRemoveSpinner.setOnClickListener {
             if (spinnerList.size > 0) {
                 val lastSpinner = spinnerList.removeAt(spinnerList.size - 1)
@@ -70,7 +65,6 @@ class ProfileEditActivity : AppCompatActivity() {
             }
         }
 
-        // Imagen de perfil (click para seleccionar)
         imgProfile.setOnClickListener {
             seleccionarImagen()
         }
@@ -79,6 +73,8 @@ class ProfileEditActivity : AppCompatActivity() {
 
         btnSave.setOnClickListener { guardarCambios() }
     }
+
+
     private fun guardarCambios(){
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser == null) {
@@ -129,13 +125,12 @@ class ProfileEditActivity : AppCompatActivity() {
         // Subir la imagen. todo: lo quitamos por ahora
         //uploadImage(userId)
 
-        // Si no hay nada que actualizar, no hacer nada
+
         if (updates.isEmpty()) {
             Toast.makeText(this, "No hay cambios para guardar", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Actualizar Firestore
         db.collection("users").document(userId)
             .update(updates)
             .addOnSuccessListener {
@@ -155,12 +150,12 @@ class ProfileEditActivity : AppCompatActivity() {
             "Hipotiroidismo", "Alergias"
         )
         val spinner = Spinner(this)
-        // Crear un ArrayAdapter con un TextView personalizado
+
         val adapter = object : ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, patologias) {
             override fun getView(position: Int, convertView: android.view.View?, parent: android.view.ViewGroup): android.view.View {
                 val view = super.getView(position, convertView, parent)
                 val textView = view as TextView
-                textView.textSize = 19f // Establecer tamaño de texto a 16sp
+                textView.textSize = 19f
                 textView.setPadding(20, 20, 20, 20)
                 return view
             }
@@ -168,7 +163,7 @@ class ProfileEditActivity : AppCompatActivity() {
             override fun getDropDownView(position: Int, convertView: android.view.View?, parent: android.view.ViewGroup): android.view.View {
                 val view = super.getDropDownView(position, convertView, parent)
                 val textView = view as TextView
-                textView.textSize = 25f // Establecer tamaño de texto a 16sp para el dropdown
+                textView.textSize = 25f
                 return view
             }
         }
@@ -191,6 +186,29 @@ class ProfileEditActivity : AppCompatActivity() {
                     if (document != null) {
                         etUsername.hint = document.getString("apodo") ?: "Apodo"
                         etRealName.hint = document.getString("name") ?: "Nombre real"
+
+                        val patologias = mutableListOf<String>()
+                        for (i in 1..5) {
+                            val patologia = document.getString("patologia$i")
+                            if (!patologia.isNullOrEmpty()) {
+                                patologias.add(patologia)
+                            }
+                        }
+                        for (i in 0 until patologias.size) {
+                            val newSpinner = createSpinner()
+                            spinnerList.add(newSpinner)
+                            spinnersContainer.addView(newSpinner)
+                        }
+
+                        // Rellenar los spinners si hay patologías existentes
+                        for (i in 0 until patologias.size) {
+                            if (i < spinnerList.size) {
+                                val spinner = spinnerList[i]
+                                val adapter = spinner.adapter as ArrayAdapter<String>
+                                val position = adapter.getPosition(patologias[i])
+                                spinner.setSelection(position)
+                            }
+                        }
                     }
                 }
         }
