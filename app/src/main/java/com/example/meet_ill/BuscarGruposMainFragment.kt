@@ -1,10 +1,12 @@
 package com.example.meet_ill
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -26,6 +28,7 @@ class BuscarGruposMainFragment : Fragment() {
     private var userRepo: UserRepository = UserRepository()
     private var groupRepo: GroupRepository = GroupRepository()
     private var listaGrupos:MutableList<Grupo> = mutableListOf()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,11 +62,27 @@ class BuscarGruposMainFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             listaGrupos = groupRepo.getAllGroups(requireContext())
             listaGrupos.size
+            var user: User? =  userRepo.getUserById(FirebaseAuth.getInstance().currentUser?.uid.toString())
 
             withContext(Dispatchers.Main) {
                 // Actualizamos el RecyclerView con los grupos obtenidos
                 binding.recyclerFilteredGroups.layoutManager = GridLayoutManager(requireContext(), 2)
-                binding.recyclerFilteredGroups.adapter = FilteredGroupAdapter(findNavController(),listaGrupos)
+                binding.recyclerFilteredGroups.adapter = FilteredGroupAdapter(findNavController(),listaGrupos){ grupo ->
+
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        groupRepo.meterParticipante(grupo.idGrupo, user!!.idUsuario)
+                        userRepo.unirGrupo(user.idUsuario, grupo.idGrupo)
+
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Unido al ${grupo.titulo}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+
+                }
             }
         }
     }
@@ -73,12 +92,33 @@ class BuscarGruposMainFragment : Fragment() {
             withContext(Dispatchers.Main) {
                 val listaFiltrada = when (filtro) {
                     "sugeridos" -> listaGrupos.filter { it.numeroDeIntegrantes >= 2 }
-                    "todos" -> listaGrupos.filter { !(user!!.grupsIds.contains(it.idGrupo))}
-                    "ya_unido" -> listaGrupos.filter { user!!.grupsIds.contains(it.idGrupo) }
+                    "todos" -> listaGrupos.filter {
+                        !(user!!.grupsIds.contains(it.idGrupo))
+                    }
+                    "ya_unido" -> listaGrupos.filter {
+                        user!!.grupsIds.contains(it.idGrupo)
+                    }
                     else -> listaGrupos
                 }
-                var adap: FilteredGroupAdapter = binding.recyclerFilteredGroups.adapter as FilteredGroupAdapter
-                adap.updateList(listaFiltrada)
+
+                if (filtro.equals("ya_unido")){
+                    listaFiltrada.forEach { grupo ->
+                        grupo.usuarioUnido = true
+                    }
+                }
+                var adap: FilteredGroupAdapter? = null
+
+                //Esta movida paq no pete al ir rapido en el nav
+                val adapter = binding.recyclerFilteredGroups.adapter
+                if (adapter is FilteredGroupAdapter) {
+                    // Si el adaptador es del tipo esperado, asignamos la referencia a adap
+                    adap = adapter
+                } else {
+                    // Si no es del tipo esperado, mostramos un mensaje de error
+                    Log.e("AdapterError", "El adaptador no está asignado correctamente o no es del tipo esperado.")
+                }
+
+                adap?.updateList(listaFiltrada)
             }
         }
     }
