@@ -61,7 +61,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun generarRecyclerGrupos() {
-        //FirebaseAuth.getInstance().signOut()
         lifecycleScope.launch(Dispatchers.IO) {
             val user: User? = userRepo.getUserById(FirebaseAuth.getInstance().currentUser?.uid.toString())
             val listaGrupos: MutableList<Grupo> = mutableListOf()

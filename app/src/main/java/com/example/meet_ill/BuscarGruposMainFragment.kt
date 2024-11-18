@@ -12,7 +12,6 @@ import com.example.meet_ill.adapters.FilteredGroupAdapter
 import com.example.meet_ill.data_classes.Grupo
 import com.example.meet_ill.data_classes.User
 import com.example.meet_ill.databinding.FragmentBuscarGruposMainBinding
-import com.example.meet_ill.databinding.FragmentHomeBinding
 import com.example.meet_ill.repos.GroupRepository
 import com.example.meet_ill.repos.UserRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -20,7 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class buscarGruposMainFragment : Fragment() {
+class BuscarGruposMainFragment : Fragment() {
 
     private lateinit var binding: FragmentBuscarGruposMainBinding
 
