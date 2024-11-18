@@ -3,6 +3,7 @@ package com.example.meet_ill
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -32,6 +33,7 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var tVContactName: TextView
     private lateinit var iVContactImage: ImageView
     private lateinit var bSendMessage: ImageButton
+    private lateinit var bBack: Button
     private lateinit var eTMessage: EditText
     private var groupRepo: GroupRepository = GroupRepository()
     private var listaMensajes: MutableList<Message> = mutableListOf()
@@ -69,6 +71,18 @@ class ChatActivity : AppCompatActivity() {
 
         eTMessage = findViewById(R.id.eTMessage)
         bSendMessage = findViewById(R.id.bSend)
+        bBack = findViewById(R.id.backButton)
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            listaMensajes = groupRepo.getMessageById(grupo.idGrupo)!!
+
+            // Actualizar la UI con los mensajes
+            withContext(Dispatchers.Main) {
+
+                inicializaRecyclerChats()
+
+            }
+        }
 
         bSendMessage.setOnClickListener{
             lifecycleScope.launch(Dispatchers.IO) {
@@ -78,61 +92,35 @@ class ChatActivity : AppCompatActivity() {
             eTMessage.text.clear()
         }
 
+        bBack.setOnClickListener{
+            finish()
+        }
+
+
+
+
 
 
     }
 
-    private fun cargarMensajes(grupo: Grupo){
+    private fun cargarMensajes(grupo: Grupo) {
 
         lifecycleScope.launch(Dispatchers.IO) {
-            while (true) {
-                listaMensajes = groupRepo.getMessageById(grupo.idGrupo)!!
 
-                withContext(Dispatchers.Main) {
-                    if(listaMensajes!=null){
-                        inicializaRecyclerChats()
-                    }
-                }
-                delay(5000)
-            }
+            listaMensajes = groupRepo.getMessageById(grupo.idGrupo)!!
 
-        }
-
-
-    }
-
-    private val handler = Handler(Looper.getMainLooper())
-    private val runnable = object : Runnable {
-        override fun run() {
-            // Llamar a la función para obtener los mensajes
-            lifecycleScope.launch(Dispatchers.IO) {
-                listaMensajes = groupRepo.getMessageById(grupo.idGrupo)!!
-
-                // Actualizar la UI con los mensajes
-                withContext(Dispatchers.Main) {
-
-
+            withContext(Dispatchers.Main) {
+                if (listaMensajes != null) {
                     inicializaRecyclerChats()
-
                 }
             }
 
-            // Reprogramar la tarea para que se ejecute después de 5 segundos
-            handler.postDelayed(this, 5000)
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        // Iniciar el runnable
-        handler.post(runnable)
-    }
 
-    override fun onStop() {
-        super.onStop()
-        // Detener el runnable cuando la actividad se detenga
-        handler.removeCallbacks(runnable)
-    }
+
+
 
     private fun inicializaRecyclerChats(){
         recyclerChats = findViewById(R.id.rVMessages)
