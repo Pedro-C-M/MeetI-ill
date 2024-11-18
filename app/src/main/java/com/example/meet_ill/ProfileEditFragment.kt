@@ -17,17 +17,11 @@ import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.view.marginTop
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
-import com.example.meet_ill.databinding.FragmentEditProfileBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import java.net.URI
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+
 
 class ProfileEditFragment : Fragment()  {
     private lateinit var imgProfile: ImageView
