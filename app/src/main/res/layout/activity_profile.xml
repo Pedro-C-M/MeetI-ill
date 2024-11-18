@@ -83,6 +83,15 @@
 
         <!-- Las patologías se añadirán dinámicamente aquí -->
     </LinearLayout>
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/design_default_color_error"
+        android:text="Cerrar Sesión"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
 
 </LinearLayout>
 
