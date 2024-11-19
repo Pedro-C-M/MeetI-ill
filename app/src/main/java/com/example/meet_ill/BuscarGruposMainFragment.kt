@@ -27,7 +27,7 @@ class BuscarGruposMainFragment : Fragment() {
 
     private var userRepo: UserRepository = UserRepository()
     private var groupRepo: GroupRepository = GroupRepository()
-    private var listaGrupos:MutableList<Grupo> = mutableListOf()
+    private var listaGrupos:List<Grupo> = mutableListOf()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +64,9 @@ class BuscarGruposMainFragment : Fragment() {
             listaGrupos.size
             var user: User? =  userRepo.getUserById(FirebaseAuth.getInstance().currentUser?.uid.toString())
 
+            listaGrupos = convertirYaUnidos(listaGrupos, user!!)
+
+
             withContext(Dispatchers.Main) {
                 // Actualizamos el RecyclerView con los grupos obtenidos
                 binding.recyclerFilteredGroups.layoutManager = GridLayoutManager(requireContext(), 2)
@@ -90,22 +93,16 @@ class BuscarGruposMainFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             val user: User? = userRepo.getUserById(FirebaseAuth.getInstance().currentUser?.uid.toString())
             withContext(Dispatchers.Main) {
-                val listaFiltrada = when (filtro) {
+                var listaFiltrada = when (filtro) {
                     "sugeridos" -> listaGrupos.filter { it.numeroDeIntegrantes >= 2 }
-                    "todos" -> listaGrupos.filter {
-                        !(user!!.grupsIds.contains(it.idGrupo))
-                    }
                     "ya_unido" -> listaGrupos.filter {
                         user!!.grupsIds.contains(it.idGrupo)
                     }
                     else -> listaGrupos
                 }
 
-                if (filtro.equals("ya_unido")){
-                    listaFiltrada.forEach { grupo ->
-                        grupo.usuarioUnido = true
-                    }
-                }
+                listaFiltrada = convertirYaUnidos(listaFiltrada, user!!)
+
                 var adap: FilteredGroupAdapter? = null
 
                 //Esta movida paq no pete al ir rapido en el nav
@@ -121,5 +118,14 @@ class BuscarGruposMainFragment : Fragment() {
                 adap?.updateList(listaFiltrada)
             }
         }
+    }
+
+    private fun convertirYaUnidos(listaGrupos: List<Grupo>, user: User): List<Grupo>{
+        var returnList = listaGrupos.toMutableList()
+        returnList.forEach { grupo ->
+            if(user!!.grupsIds.contains(grupo.idGrupo))
+                grupo.usuarioUnido = true
+        }
+        return returnList
     }
 }
