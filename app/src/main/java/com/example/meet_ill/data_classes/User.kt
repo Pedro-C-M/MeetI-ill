@@ -10,7 +10,7 @@ data class User(
     var correo: String,
     var grupsIds: MutableList<String>,
     var patologias: MutableList<String>,
-    var imagenPerfil: String // URI o URL de la imagen de perfil
+    var imagenPerfil: String, // URI o URL de la imagen de perfil
 ) : Parcelable {
 
 }

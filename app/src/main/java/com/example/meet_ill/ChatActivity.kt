@@ -130,7 +130,10 @@ class ChatActivity : AppCompatActivity() {
     private fun inicializaRecyclerChats(){
         recyclerChats = findViewById(R.id.rVMessages)
 
-        recyclerChats.layoutManager = LinearLayoutManager(applicationContext)
+        recyclerChats.layoutManager = LinearLayoutManager(applicationContext).apply {
+            stackFromEnd = true
+            reverseLayout = false
+        }
 
         recyclerChats.adapter = ChatAdapter(listaMensajes)
 
