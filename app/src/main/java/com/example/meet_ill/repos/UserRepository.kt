@@ -2,7 +2,9 @@ package com.example.meet_ill.repos
 
 import android.util.Log
 import com.example.meet_ill.data_classes.User
+import com.example.meet_ill.util.AuthSingleton.auth
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
 
@@ -20,7 +22,8 @@ class UserRepository {
                     idUsuario = userId,
                     nombreUsuario = document.getString("apodo") ?: "",
                     nombreReal = document.getString("name") ?: "",
-                    patologias = mutableListOf(),
+                    correo = document.getString("email") ?: "",
+                    patologias = (document.get("patologias") as? List<String>)?.toMutableList() ?: mutableListOf(),
                     grupsIds = (document.get("groupsIds") as? List<String>)?.toMutableList() ?: mutableListOf(),
                     imagenPerfil = document.getString("imagenPerfil") ?: ""
                 )
@@ -31,5 +34,25 @@ class UserRepository {
             Log.e("Repos", "Error al obtener el usuario", e)
             null
         }
+    }
+
+    suspend fun unirGrupo(idUsuario: String, idGrupo: String) {
+        try {
+            db.document(idUsuario).update("groupsIds", FieldValue.arrayUnion(idGrupo)).await()
+        } catch (e: Exception) {
+            Log.e("Repos", "Error al meter grupo al usuario", e)
+        }
+    }
+
+    // Actualizar un usuario
+    fun updateUser(userId: String, updates: Map<String, Any>, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        db.document(userId).update(updates)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onFailure(it) }
+    }
+
+    // Obtener el usuario actual autenticado
+    fun getCurrentUserId(): String? {
+        return auth.currentUser?.uid
     }
 }

@@ -9,9 +9,11 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.example.meet_ill.repos.UserRepository
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.launch
 import java.io.File
 
 class ProfileActivity : AppCompatActivity() {
@@ -21,17 +23,22 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var tvRealName: TextView
     private lateinit var tvCorreo: TextView
     private lateinit var btnEditUser: Button
+    private lateinit var btnLogout: Button
+
+    private val userRepository = UserRepository()
+    private lateinit var currentUserId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.fragment_profile_menu)
+        setContentView(R.layout.activity_profile)
 
         imgProfile = findViewById(R.id.imgProfile)
         tvUsername = findViewById(R.id.tvUsername)
         tvRealName = findViewById(R.id.tvRealName)
         tvCorreo = findViewById(R.id.tvCorreo)
         btnEditUser = findViewById(R.id.btnEditUser)
-
+        btnLogout = findViewById(R.id.btnLogout)
+        currentUserId = userRepository.getCurrentUserId() ?: ""
 
         cargarDatosUsuario()
 
@@ -40,7 +47,19 @@ class ProfileActivity : AppCompatActivity() {
             val intent = Intent(this, ProfileEditActivity::class.java)
             startActivity(intent)
         }
+
+        //Pa cerrar sesion
+        btnLogout.setOnClickListener {
+            FirebaseAuth.getInstance().signOut() // Cierra sesión en Firebase
+            Toast.makeText(this, "Sesión cerrada", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, LoginActivity::class.java) // Redirige al login
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish() // Finaliza la actividad actual
+        }
     }
+
+    //Hace que te vayas directamente al Main activity, para que funcione el boton de ir pa tras
     override fun onBackPressed() {
 
         val intent = Intent(this, MainActivity::class.java)
@@ -53,68 +72,63 @@ class ProfileActivity : AppCompatActivity() {
     private fun cargarDatosUsuario() {
         val currentUser = FirebaseAuth.getInstance().currentUser
 
-        if (currentUser != null) {
-            val userId = currentUser.uid
+        lifecycleScope.launch() {
+            val user = userRepository.getUserById(currentUserId)
+            if (user != null) {
+                tvUsername.text = user.nombreUsuario
+                tvRealName.text = user.nombreReal
+                tvCorreo.text = user.correo
 
-            FirebaseFirestore.getInstance().collection("users")
-                .document(userId)
-                .get()
-                .addOnSuccessListener { document ->
-                    if (document != null) {
-                        tvUsername.text = document.getString("apodo") ?: "Sin apodo"
-                        tvRealName.text = document.getString("name") ?: "Sin nombre"
-                        tvCorreo.text = document.getString("email") ?: "Sin correo"
+                cargarPatologias(user.patologias)
+                cargarImagen(user.imagenPerfil)
 
-                        val patologias = listOf(
-                            document.getString("patologia1") ?: "",
-                            document.getString("patologia2") ?: "",
-                            document.getString("patologia3") ?: "",
-                            document.getString("patologia4") ?: "",
-                            document.getString("patologia5") ?: ""
-                        )
+            } else {
+                Toast.makeText(
+                    this@ProfileActivity,
+                    "Error al cargar los datos",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+    private fun cargarPatologias(patologias: MutableList<String>) {
+        val layoutPatologias = findViewById<LinearLayout>(R.id.linearLayoutPatologias)
+        layoutPatologias?.removeAllViews()
 
-                        val layoutPatologias = findViewById<LinearLayout>(R.id.linearLayoutPatologias)
-                        layoutPatologias?.removeAllViews()
-
-                        for (patologia in patologias) {
-                            if (patologia.isNotEmpty()) {
-                                val textView = TextView(this)
-                                textView.text = patologia
-                                textView.textSize = 18f // Establecer tamaño de texto
-                                textView.setPadding(0, 5, 0, 5) // Añadir algo de espacio entre patologías
-                                layoutPatologias?.addView(textView)
-                            }
-                        }
-
-
-                        val imageUrl = ""
-                        if (!imageUrl.isNullOrEmpty()) {
-
-                            val storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl)
+        for (i in 0 until patologias.size) {
+            val textView = TextView(this)
+            textView.text = patologias[i]
+            textView.textSize = 18f // Establecer tamaño de texto
+            textView.setPadding(0, 5, 0, 5) // Añadir algo de espacio entre patologías
+            layoutPatologias?.addView(textView)
+        }
+    }
 
 
-                            val localFile = File.createTempFile("profile_image", "jpg")
+    //todo no funciona por ahora
+    private fun cargarImagen(imagenPerfil: String) {
 
-                            storageReference.getFile(localFile)
-                                .addOnSuccessListener {
-                                    val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
-                                    imgProfile.setImageBitmap(bitmap)
-                                }
-                                .addOnFailureListener {
-                                    imgProfile.setImageResource(R.drawable.default_profile_image)
-                                    Toast.makeText(this, "Error al cargar la imagen", Toast.LENGTH_SHORT).show()
-                                }
-                        } else {
-                            imgProfile.setImageResource(R.drawable.default_profile_image)
-                        }
+        val imageUrl = ""
+        if (!imageUrl.isNullOrEmpty()) {
 
-                    }
+            val storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl)
+
+
+            val localFile = File.createTempFile("profile_image", "jpg")
+
+            storageReference.getFile(localFile)
+                .addOnSuccessListener {
+                    val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+                    imgProfile.setImageBitmap(bitmap)
                 }
                 .addOnFailureListener {
-                    Toast.makeText(this, "Error al cargar los datos", Toast.LENGTH_SHORT).show()
+                    imgProfile.setImageResource(R.drawable.default_profile_image)
+                    Toast.makeText(this, "Error al cargar la imagen", Toast.LENGTH_SHORT).show()
                 }
         } else {
-            Toast.makeText(this, "No se encontró usuario en sesión", Toast.LENGTH_SHORT).show()
+            imgProfile.setImageResource(R.drawable.default_profile_image)
         }
+
+
     }
 }

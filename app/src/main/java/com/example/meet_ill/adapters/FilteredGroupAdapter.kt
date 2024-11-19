@@ -2,26 +2,31 @@ package com.example.meet_ill.adapters
 
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
-import com.example.meet_ill.R
 import com.example.meet_ill.data_classes.Grupo
 import com.example.meet_ill.databinding.RecyclerContactoItem2Binding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 
 
 class FilteredGroupAdapter(
     val navController: NavController,
     var listaGrupos: List<Grupo>,
-    //Añadir aquí la info que se pasa al listener en el futuro
 
+    private val onJoinGroup: (Grupo) -> Unit // Callback
 ): RecyclerView.Adapter<FilteredGroupAdapter.ViewHolder>() {
+
+    private val adapterScope = CoroutineScope(Dispatchers.Main + Job()) // Define el scope del adaptador
 
     class ViewHolder(
         private val navController: NavController,
         private val binding: RecyclerContactoItem2Binding,
+
+        private val onJoinGroup: (Grupo) -> Unit
     ): RecyclerView.ViewHolder(binding.root){
         private var grupoActual: Grupo? = null
 
@@ -32,13 +37,23 @@ class FilteredGroupAdapter(
             binding.ivPortada.load(grupo.urlImagen)
             grupoActual = grupo
 
-            binding.btEntrar.text = "Unirse"
+            if(grupo.usuarioUnido!=null && !grupo.usuarioUnido!!){
+                binding.btEntrar.text = "Unirse"
+            }else{
+                binding.btEntrar.text = "Unido"
+            }
+
+
+            binding.btEntrar.setOnClickListener{
+                if(grupo.usuarioUnido!=null && !grupo.usuarioUnido!!){
+                    onJoinGroup(grupo)
+                    binding.btEntrar.text = "Unido"
+                }
+            }
         }
 
         init{
-            binding.root.setOnClickListener{
-                //onClickListener(grupoActual)
-            }
+            //Nada de momento
         }
     }
 
@@ -49,7 +64,7 @@ class FilteredGroupAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = RecyclerContactoItem2Binding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(navController, binding)
+        return ViewHolder(navController, binding, onJoinGroup)
 
     }
 

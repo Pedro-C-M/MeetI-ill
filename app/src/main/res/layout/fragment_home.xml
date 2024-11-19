@@ -12,6 +12,7 @@
         android:layout_height="match_parent"
         android:layout_marginTop="16dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="100dp"
+        android:paddingBottom="20sp" />
 
 </FrameLayout>

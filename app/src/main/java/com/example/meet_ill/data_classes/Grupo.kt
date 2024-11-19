@@ -10,8 +10,8 @@ data class Grupo(
     val titulo: String,
     val numeroDeIntegrantes: Int,
     val urlImagen: Int,
-    val idGrupo: String
-
+    val idGrupo: String,
+    var usuarioUnido: Boolean? = false // Opcional, y valor por defecto es null
 ) : Parcelable {
     val strIntegrantes: String//Get es para properties creo
     get() = if (numeroDeIntegrantes == -1) {

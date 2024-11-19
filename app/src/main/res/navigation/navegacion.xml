@@ -32,12 +32,12 @@
         tools:layout="@layout/fragment_chat_privado_main" />
     <fragment
         android:id="@+id/buscarGruposMainFragment"
-        android:name="com.example.meet_ill.buscarGruposMainFragment"
+        android:name="com.example.meet_ill.BuscarGruposMainFragment"
         android:label="fragment_buscar_grupos_main"
         tools:layout="@layout/fragment_buscar_grupos_main" />
     <fragment
         android:id="@+id/ajustesMainFragment"
-        android:name="com.example.meet_ill.ajustesMainFragment"
+        android:name="com.example.meet_ill.AjustesMainFragment"
         android:label="fragment_ajustes_main"
         tools:layout="@layout/fragment_ajustes_main" />
 </navigation>
