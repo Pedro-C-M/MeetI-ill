@@ -28,8 +28,12 @@ class GroupRepository {
                 return null
             }
             // Obtén el nombre del recurso como String
-            val fondo1 = document.getString("urlImagen") ?: "fondo1" // Si no existe, usa un valor predeterminado
+            var fondo1 = document.getString("urlImagen") ?: "fondo1" // Si no existe, usa un valor predeterminado
             // Obtén el resourceId usando el nombre del recurso
+            if(fondo1.isBlank())
+            {
+                fondo1 = "fondo1"
+            }
             val resourceId = context.resources.getIdentifier(fondo1, "drawable", context.packageName)
             return Grupo(
                 titulo = document.getString("nombre")?:"Sin título",
