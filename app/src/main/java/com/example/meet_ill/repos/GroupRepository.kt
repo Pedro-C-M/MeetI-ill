@@ -36,7 +36,7 @@ class GroupRepository {
             }
             val resourceId = context.resources.getIdentifier(fondo1, "drawable", context.packageName)
             return Grupo(
-                titulo = document.getString("nombre")?:"Sin título",
+                enfermedad = document.getString("nombre")?:"Sin título",
                 numeroDeIntegrantes = (document.get("participantes") as? List<String>)?.count() ?: 0,
                 urlImagen = resourceId,
                 idGrupo = groupId
@@ -124,7 +124,7 @@ class GroupRepository {
                 val resourceId = context.resources.getIdentifier(fondo, "drawable", context.packageName)
                 //Creo el gurpo
                 val grupo = Grupo(
-                    titulo = document.getString("nombre") ?: "Sin título",
+                    enfermedad = document.getString("nombre") ?: "Sin título",
                     numeroDeIntegrantes = (document.get("participantes") as? List<String>)?.count() ?: 0,
                     urlImagen = resourceId,
                     idGrupo = document.id

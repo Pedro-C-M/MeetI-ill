@@ -96,7 +96,9 @@ class BuscarGruposMainFragment : Fragment() {
             val user: User? = userRepo.getUserById(FirebaseAuth.getInstance().currentUser?.uid.toString())
             withContext(Dispatchers.Main) {
                 var listaFiltrada = when (filtro) {
-                    "sugeridos" -> listaGrupos.filter { it.numeroDeIntegrantes >= 2 }
+                    "sugeridos" -> listaGrupos.filter {
+                        user!!.patologias.contains(it.enfermedad)
+                    }
                     "ya_unido" -> listaGrupos.filter {
                         user!!.grupsIds.contains(it.idGrupo)
                     }

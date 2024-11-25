@@ -108,7 +108,7 @@ class HomeFragment : Fragment() {
     //Si no hay grupo aqui creo un card que en verdad es un grupo indicandolo
     private fun crearCardSinGrupos(): Grupo {
         return Grupo(
-            titulo = "Sin grupos aún",
+            enfermedad = "Sin grupos aún",
             idGrupo = "",
             numeroDeIntegrantes = -1,
             urlImagen = R.drawable.fondo1

@@ -33,6 +33,7 @@ class GroupAdapter(
             //Si estamos con el caso de el card de sin grupos
             if(grupo.numeroDeIntegrantes == -1){
                 binding.btEntrar.visibility = View.GONE
+                binding.tvTitle.text = "Sin grupos aún"
             }
 
             // Convertir el nombre a un ID de recurso, si lo hago remoto cambiar, de momento imagenes en drawable
