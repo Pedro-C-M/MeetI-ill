@@ -8,32 +8,30 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     android:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-    <TextView
-        android:id="@+id/toolbarTittle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="MEET-ILL"
-        android:textColor="@android:color/white"
-        android:textSize="20sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-    <Button
-        android:id="@+id/menuBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start|center_vertical"
-        android:layout_marginEnd="16dp"
-        android:text="Menu"
-        app:icon="@drawable/baseline_menu_24" />
+        <TextView
+            android:id="@+id/toolbarTittle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="MEET-ILL"
+            android:textColor="@android:color/white"
+            android:textSize="28sp" />
 
-    <Button
-        android:id="@+id/perfilBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|center_vertical"
-        android:layout_marginEnd="8dp"
-        android:text="Perfil"
-        app:icon="@drawable/baseline_person_24" />
-
-
+        <Button
+            android:id="@+id/perfilBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_marginEnd="8dp"
+            android:text="Perfil"
+            app:icon="@drawable/baseline_person_24" />
+    </LinearLayout>
 </androidx.appcompat.widget.Toolbar>
