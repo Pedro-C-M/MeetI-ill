@@ -1,5 +1,6 @@
 package com.example.meet_ill
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -8,7 +9,10 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -38,6 +42,7 @@ class ChatActivity : AppCompatActivity() {
     private var groupRepo: GroupRepository = GroupRepository()
     private var listaMensajes: MutableList<Message> = mutableListOf()
     private lateinit var grupo: Grupo
+    private lateinit var launcher : ActivityResultLauncher<Intent>
 
 
 
@@ -66,6 +71,11 @@ class ChatActivity : AppCompatActivity() {
 
         iVContactImage = findViewById(R.id.iVContactImage)
         iVContactImage.load(grupo.urlImagen)
+
+        launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ resultado ->
+            var devuelto = resultado.data?.getStringExtra("despido")
+            Toast.makeText(this, devuelto, Toast.LENGTH_LONG).show()
+        }
 
         onStart()
 
@@ -99,6 +109,12 @@ class ChatActivity : AppCompatActivity() {
 
         bBack.setOnClickListener{
             finish()
+        }
+
+        tVContactName.setOnClickListener{
+            val intent = Intent(applicationContext, GroupInfoActivity::class.java)
+            intent.putExtra("grupo", grupo)
+            launcher.launch(intent)
         }
 
 
