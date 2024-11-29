@@ -57,6 +57,8 @@ dependencies {
 
     implementation(libs.material.v190)
 
+    implementation (libs.circleimageview)
+
     implementation(libs.coil)
     implementation(libs.coil.network.okhttp)
 

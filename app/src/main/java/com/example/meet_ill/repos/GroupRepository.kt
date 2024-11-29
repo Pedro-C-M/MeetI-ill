@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.example.meet_ill.data_classes.Grupo
 import com.example.meet_ill.data_classes.Message
+import com.example.meet_ill.data_classes.User
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -85,6 +86,31 @@ class GroupRepository {
             null
         }
         return messages;
+    }
+
+    suspend fun getParticipantsById(groupId: String):MutableList<User>?{
+        val participants = mutableListOf<User>()
+        try {
+            val document = db.document(groupId).get().await()
+            for(participant in (document.get("participantes") as? List<String>)!!){
+
+                val usuario =Firebase.firestore.collection("users").document(participant!!).get().await()
+
+                val nombre = usuario.getString("apodo")!!
+                val imagen= usuario.getString("imagenPerfil").orEmpty()
+                val nombreReal = usuario.getString("name")!!
+                val finalUser = User(participant,nombre,nombreReal,"", mutableListOf(),
+                    mutableListOf(),imagen)
+
+                participants.add(finalUser)
+
+            }
+
+        } catch (e: Exception) {
+            Log.e("Repos", "Error al obtener el grupo", e)
+            null
+        }
+        return participants;
     }
 
 
