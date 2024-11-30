@@ -21,6 +21,7 @@ import com.example.meet_ill.data_classes.Grupo
 import com.example.meet_ill.data_classes.User
 import com.example.meet_ill.databinding.ActivityGroupInfoBinding
 import com.example.meet_ill.repos.GroupRepository
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -82,8 +83,18 @@ class GroupInfoActivity : AppCompatActivity() {
             withContext(Dispatchers.Main) {
 
                 inicializaRecyclerParticipantes()
-                binding.tvNumeroParticipantes.text= "${listaParticipantes.count()} participantes"
+                binding.tvNumeroParticipantes.text= "${listaParticipantes.count()+1} participantes"
             }
+        }
+
+        binding.btSalir.setOnClickListener{
+            lifecycleScope.launch(Dispatchers.IO) {
+                groupRepo.abandonarGrupo(grupo.idGrupo!!, FirebaseAuth.getInstance().currentUser?.uid.toString())
+            }
+
+            finish()
+            val intent = Intent(applicationContext, MainActivity::class.java)
+            launcher.launch(intent)
         }
 
     }

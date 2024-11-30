@@ -94,15 +94,21 @@ class GroupRepository {
             val document = db.document(groupId).get().await()
             for(participant in (document.get("participantes") as? List<String>)!!){
 
-                val usuario =Firebase.firestore.collection("users").document(participant!!).get().await()
+                if(participant!=FirebaseAuth.getInstance().currentUser?.uid.toString()) {
 
-                val nombre = usuario.getString("apodo")!!
-                val imagen= usuario.getString("imagenPerfil").orEmpty()
-                val nombreReal = usuario.getString("name")!!
-                val finalUser = User(participant,nombre,nombreReal,"", mutableListOf(),
-                    mutableListOf(),imagen)
+                    val usuario =
+                        Firebase.firestore.collection("users").document(participant!!).get().await()
 
-                participants.add(finalUser)
+                    val nombre = usuario.getString("apodo")!!
+                    val imagen = usuario.getString("imagenPerfil").orEmpty()
+                    val nombreReal = usuario.getString("name")!!
+                    val finalUser = User(
+                        participant, nombre, nombreReal, "", mutableListOf(),
+                        mutableListOf(), imagen
+                    )
+
+                    participants.add(finalUser)
+                }
 
             }
 
@@ -171,6 +177,30 @@ class GroupRepository {
             db.document(idGrupo).update("participantes", FieldValue.arrayUnion(idUsuario)).await()
         } catch (e: Exception) {
             Log.e("Repos", "Error al meter usuario a grupo", e)
+        }
+    }
+
+    suspend fun abandonarGrupo(groupId: String, idUsuario: String){
+        try {
+            val document = db.document(groupId)
+
+            document.update("participantes",FieldValue.arrayRemove(idUsuario)).
+            addOnSuccessListener { Log.d("borrar","se elimino correctamente") }.
+            addOnFailureListener{Log.d("borrar","no se borro bien")}.
+            await()
+
+
+            val documentUsuarios = Firebase.firestore.collection("users").document(idUsuario)
+
+            documentUsuarios.update("groupsIds",FieldValue.arrayRemove(groupId)).
+            addOnSuccessListener { Log.d("borrar","se borro bien en el usuario") }.
+            addOnFailureListener{Log.d("borrar","no se borro bien en el usuario")}.
+            await()
+
+
+        } catch (e: Exception) {
+            Log.e("Repos", "Error al enviar el mensaje", e)
+            null
         }
     }
 }
