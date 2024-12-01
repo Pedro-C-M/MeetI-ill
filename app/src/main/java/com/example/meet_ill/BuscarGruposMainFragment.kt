@@ -47,12 +47,14 @@ class BuscarGruposMainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         generarRecyclerFiltrado()
 
-        binding.rgFilters.setOnCheckedChangeListener { _, checkedId ->
-            // Filtramos la lista según el RadioButton seleccionado
-            when (checkedId) {
-                R.id.rbSuggested -> filtrarGrupos("sugeridos")
-                R.id.rbAll -> filtrarGrupos("todos")
-                R.id.rbJoined -> filtrarGrupos("ya_unido")
+        binding.mbtgFilters.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (isChecked) {
+                // Filtramos la lista según el botón seleccionado
+                when (checkedId) {
+                    R.id.btnSuggested -> filtrarGrupos("sugeridos")
+                    R.id.btnAll -> filtrarGrupos("todos")
+                    R.id.btnJoined -> filtrarGrupos("ya_unido")
+                }
             }
         }
     }
@@ -94,7 +96,9 @@ class BuscarGruposMainFragment : Fragment() {
             val user: User? = userRepo.getUserById(FirebaseAuth.getInstance().currentUser?.uid.toString())
             withContext(Dispatchers.Main) {
                 var listaFiltrada = when (filtro) {
-                    "sugeridos" -> listaGrupos.filter { it.numeroDeIntegrantes >= 2 }
+                    "sugeridos" -> listaGrupos.filter {
+                        user!!.patologias.contains(it.enfermedad)
+                    }
                     "ya_unido" -> listaGrupos.filter {
                         user!!.grupsIds.contains(it.idGrupo)
                     }
