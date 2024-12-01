@@ -1,9 +1,7 @@
 package com.example.meet_ill
 
-
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
@@ -16,31 +14,32 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import com.example.meet_ill.adapters.ChatAdapter
-import com.example.meet_ill.adapters.ParticipantesAdapter
 import com.example.meet_ill.data_classes.Grupo
-
+import com.example.meet_ill.data_classes.Message
 import com.example.meet_ill.data_classes.User
-import com.example.meet_ill.databinding.ActivityGroupInfoBinding
-import com.example.meet_ill.repos.GroupRepository
+import com.example.meet_ill.databinding.ActivityChatBinding
+import com.example.meet_ill.repos.ChatRepository
+import com.example.meet_ill.repos.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+class PrivateChatActivity : AppCompatActivity() {
 
-class GroupInfoActivity : AppCompatActivity() {
-
-    private lateinit var recyclerParticipantes: RecyclerView
-    private lateinit var binding: ActivityGroupInfoBinding
-    private var listaParticipantes: MutableList<User> = mutableListOf()
-    private var groupRepo: GroupRepository = GroupRepository()
-    private lateinit var grupo: Grupo
+    private lateinit var binding: ActivityChatBinding
+    private lateinit var otroUsuario: User
+    private lateinit var usuarioId: String
     private lateinit var launcher : ActivityResultLauncher<Intent>
+    private var listaMensajes: MutableList<Message> = mutableListOf()
+    private var chatRepo: ChatRepository = ChatRepository()
+    private lateinit var recyclerChats: RecyclerView
+    private  var chatId: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = ActivityGroupInfoBinding.inflate(layoutInflater)
+        binding = ActivityChatBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
@@ -60,60 +59,87 @@ class GroupInfoActivity : AppCompatActivity() {
 
     private fun initVars(){
 
-        grupo = intent.getParcelableExtra("grupo")!!
+        otroUsuario = intent.getParcelableExtra("user")!!
+
+        usuarioId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+        binding.tVContactName.text=otroUsuario.nombreUsuario
+
+        binding.iVContactImage.load(otroUsuario.imagenPerfil)
 
         launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ resultado ->
             var devuelto = resultado.data?.getStringExtra("despido")
             Toast.makeText(this, devuelto, Toast.LENGTH_LONG).show()
         }
 
-        binding.ivFotoPerfil.load(grupo.urlImagen)
-        binding.tvNombreGrupo.text = grupo.titulo
+        onStart()
 
-        binding.backButton.setOnClickListener{
-            finish()
-            val intent = Intent(applicationContext, ChatActivity::class.java)
-            intent.putExtra("grupo", grupo)
-            launcher.launch(intent)
-        }
 
         lifecycleScope.launch(Dispatchers.IO) {
-            listaParticipantes = groupRepo.getParticipantsById(grupo.idGrupo)!!
+            chatId = chatRepo.getChatId(otroUsuario, usuarioId)!!
+
+            listaMensajes = chatRepo.getMessageById(chatId)!!
 
             // Actualizar la UI con los mensajes
             withContext(Dispatchers.Main) {
 
-                inicializaRecyclerParticipantes()
-                binding.tvNumeroParticipantes.text= "${listaParticipantes.count()+1} participantes"
+                inicializaRecyclerChats()
+
             }
         }
 
-        binding.btSalir.setOnClickListener{
+
+        binding.bSend.setOnClickListener{
             lifecycleScope.launch(Dispatchers.IO) {
-                groupRepo.abandonarGrupo(grupo.idGrupo!!, FirebaseAuth.getInstance().currentUser?.uid.toString())
+                chatRepo.addMessage(binding.eTMessage.text.toString(), chatId)
+
+
+                withContext(Dispatchers.Main) {
+                    cargarMensajes(chatId)
+                    binding.eTMessage.text.clear()
+                }
             }
 
+        }
 
+        binding.backButton.setOnClickListener{
             val intent = Intent(applicationContext, MainActivity::class.java)
             launcher.launch(intent)
-
         }
+
+
+
 
     }
 
+    private fun cargarMensajes(chatId: String) {
 
-    private fun inicializaRecyclerParticipantes(){
-        recyclerParticipantes = binding.rvParticipantes
+        lifecycleScope.launch(Dispatchers.IO) {
 
-        recyclerParticipantes.layoutManager = LinearLayoutManager(applicationContext).apply {
+            listaMensajes = chatRepo.getMessageById(chatId)!!
+
+            withContext(Dispatchers.Main) {
+                if (listaMensajes != null) {
+                    inicializaRecyclerChats()
+                }
+            }
+
+        }
+    }
+
+
+
+
+
+    private fun inicializaRecyclerChats(){
+        recyclerChats = findViewById(R.id.rVMessages)
+
+        recyclerChats.layoutManager = LinearLayoutManager(applicationContext).apply {
+            stackFromEnd = true
+            reverseLayout = false
         }
 
-        recyclerParticipantes.adapter = ParticipantesAdapter(listaParticipantes){ participante ->
-            val intent = Intent(applicationContext, PrivateChatActivity::class.java)
-            intent.putExtra("user", participante)
-            launcher.launch(intent)
-            finish()
-        }
+        recyclerChats.adapter = ChatAdapter(listaMensajes)
 
     }
 }

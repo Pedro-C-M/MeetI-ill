@@ -11,20 +11,32 @@ import com.example.meet_ill.data_classes.User
 
 import com.example.meet_ill.databinding.RecyclerParticipanteItemBinding
 
-class ParticipantesAdapter(val listaParcitipantes: List<User>): RecyclerView.Adapter<ParticipantesAdapter.ViewHolder>() {
+
+
+
+class ParticipantesAdapter(val listaParcitipantes: List<User>,
+                           private val onClickListener: (User?) -> Unit): RecyclerView.Adapter<ParticipantesAdapter.ViewHolder>() {
 
 
 
 
-    class ViewHolder(private val binding: RecyclerParticipanteItemBinding,): RecyclerView.ViewHolder(binding.root){
+    class ViewHolder(private val binding: RecyclerParticipanteItemBinding,onClickListener: (User?) -> Unit): RecyclerView.ViewHolder(binding.root){
 
+        private var usuarioActual: User? = null
 
 
         fun bind(participante: User){
             binding.ivImagenPerfil.load(participante.imagenPerfil)
             binding.tvNombre.text = participante.nombreUsuario
+            usuarioActual = participante
             //la funcionalidad del botón más tarde
 
+        }
+
+        init{
+            binding.btAbrirChat.setOnClickListener{it ->
+                onClickListener(usuarioActual)
+            }
         }
 
 
@@ -33,7 +45,7 @@ class ParticipantesAdapter(val listaParcitipantes: List<User>): RecyclerView.Ada
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {;
 
         val binding = RecyclerParticipanteItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding)
+        return ViewHolder(binding,onClickListener)
     }
 
     override fun getItemCount(): Int {
