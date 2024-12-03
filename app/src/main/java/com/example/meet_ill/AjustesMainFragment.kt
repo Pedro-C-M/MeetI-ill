@@ -44,6 +44,10 @@ class AjustesMainFragment : Fragment() {
 
         prepararSolicitudGrupos()//Esto toca el tx y la solicitud del grupo
 
+        binding.botonVerSolicitudes.setOnClickListener{
+            val intent = Intent(requireContext(), VisualizarSolicitudesActivity::class.java)
+            startActivity(intent)
+        }
 
         binding.btnCerrarSesion.setOnClickListener{
             FirebaseAuth.getInstance().signOut()

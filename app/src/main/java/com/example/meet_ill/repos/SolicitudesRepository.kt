@@ -1,6 +1,7 @@
 package com.example.meet_ill.repos
 
 import android.util.Log
+import com.example.meet_ill.data_classes.ConjuntoSolicitudes
 import com.example.meet_ill.data_classes.User
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
@@ -14,17 +15,20 @@ class SolicitudesRepository {
     private val db = Firebase.firestore.collection("solicitudes")
 
 
-    suspend fun getUserAlreadySolicited(userId : String, enfermedad : String): Boolean{
+    suspend fun getUserAlreadySolicited(userId: String, enfermedad: String): Boolean {
         try {
-            val querySnapshot = db.whereEqualTo("idUsuario", userId).whereEqualTo("enfermedad", enfermedad).get().await()
+            val querySnapshot =
+                db.whereEqualTo("idUsuario", userId).whereEqualTo("enfermedad", enfermedad).get()
+                    .await()
             // Si la consulta devuelve documentos, significa que ya existe la solicitud
             return !querySnapshot.isEmpty
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             Log.e("Repos", "Error al comprobar ya solicitado", e)
             return false
         }
     }
-    suspend fun createSolicitud(user : User, enfermedad : String): Boolean{
+
+    suspend fun createSolicitud(user: User, enfermedad: String): Boolean {
         try {
             val newSolicitud = db.document()
 
@@ -40,6 +44,26 @@ class SolicitudesRepository {
         } catch (e: Exception) {
             Log.e("Repos", "Error al crear la solicitud", e)
             return false
+        }
+    }
+
+    suspend fun getDiferentesSolicitudes(): Map<String, Int> {
+        return try {
+            val todo = db.get().await()
+
+            val contadorEnfermedades = mutableMapOf<String, Int>()
+
+            for (document in todo.documents) {
+                val enfermedad = document.getString("enfermedad")
+                if (!enfermedad.isNullOrBlank()) {
+                    contadorEnfermedades[enfermedad] =
+                        contadorEnfermedades.getOrDefault(enfermedad, 0) + 1
+                }
+            }
+            contadorEnfermedades
+        } catch (e: Exception) {
+            Log.e("Repos", "Error al obtener solicitudes", e)
+            emptyMap()
         }
     }
 }
