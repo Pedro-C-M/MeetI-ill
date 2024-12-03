@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -11,11 +11,60 @@
         android:id="@+id/tvTitulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Configuración"
+        android:text="Otras opciones"
         android:textSize="24sp"
         android:layout_gravity="center"
         android:textStyle="bold"
         android:paddingBottom="16dp" />
+
+    <View
+        android:id="@+id/separador1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/darker_gray" />
+
+    <TextView
+        android:id="@+id/tvSolicitarGrupo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="¿Qué patología necesita un grupo?"
+        android:textSize="24sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textFieldGrupo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Introduzca la patología deseada"
+        app:endIconDrawable="@drawable/baseline_send_24"
+
+        app:endIconMode="custom">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tinputSolicitud"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/botonVerSolicitudes"
+        style="@style/Widget.Material3.Button.ElevatedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ver solicitudes"
+        android:layout_marginTop="24dp"
+        android:layout_gravity="center_horizontal" />
+
+    <View
+        android:id="@+id/separador2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginBottom="28dp"
+        android:background="@android:color/darker_gray" />
 
     <Button
         android:id="@+id/btnCerrarSesion"
@@ -24,5 +73,9 @@
         android:text="Cerrar sesión"
         android:backgroundTint="@color/design_default_color_primary"
         android:textColor="@android:color/white" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
