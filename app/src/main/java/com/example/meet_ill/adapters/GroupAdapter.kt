@@ -31,8 +31,8 @@ class GroupAdapter(
             binding.tvTitle.text = grupo.titulo
             binding.tvIntegrantes.text = grupo.strIntegrantes
             //Si estamos con el caso de el card de sin grupos
+            binding.btEntrar.visibility = View.GONE
             if(grupo.numeroDeIntegrantes == -1){
-                binding.btEntrar.visibility = View.GONE
                 binding.tvTitle.text = "Sin grupos aún"
             }
 
