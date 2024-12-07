@@ -27,7 +27,7 @@
 
     <fragment
         android:id="@+id/chatPrivadoMainFragment"
-        android:name="com.example.meet_ill.chatPrivadoMainFragment"
+        android:name="com.example.meet_ill.ChatPrivadoMainFragment"
         android:label="fragment_chat_privado_main"
         tools:layout="@layout/fragment_chat_privado_main" />
     <fragment

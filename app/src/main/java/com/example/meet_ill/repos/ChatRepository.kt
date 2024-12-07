@@ -1,6 +1,7 @@
 package com.example.meet_ill.repos
 
 import android.util.Log
+import com.example.meet_ill.data_classes.ChatRecientes
 import com.example.meet_ill.data_classes.Message
 import com.example.meet_ill.data_classes.User
 import com.google.firebase.Firebase
@@ -17,7 +18,39 @@ class ChatRepository {
 
     private val db = Firebase.firestore.collection("chats")
 
+    //Funcion para ver todos los chats recientes de un usuario
+    suspend fun getChatsForUser(userId: String): List<ChatRecientes> {
+        val chats = mutableListOf<ChatRecientes>()
+        try {
+            val documents = db.whereArrayContains("participantes", userId).get().await()
+            for (document in documents) {
+                val participantes = document.get("participantes") as? List<String> ?: emptyList()
+                val lastMessage = document.getString("ultimoMensaje") ?: ""
+                val timestamp = document.getTimestamp("ultimoMensajeHora")?.toDate()
+                val formattedTime = timestamp?.let {
+                    SimpleDateFormat("hh:mm a", Locale.getDefault()).format(it)
+                } ?: ""
 
+                val otroUsuarioId = participantes.first { it != userId }
+                val otroUsuario = Firebase.firestore.collection("users").document(otroUsuarioId).get().await()
+                val otroUsuarioNombre = otroUsuario.getString("apodo") ?: ""
+                val otroUsuarioImagen = otroUsuario.getString("imagenPerfil") ?: ""
+
+                chats.add(
+                    ChatRecientes(
+                        idChat = document.id,
+                        nombre = otroUsuarioNombre,
+                        imagenPerfil = otroUsuarioImagen,
+                        ultimoMensaje = lastMessage,
+                        horaUltimoMensaje = formattedTime
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            Log.e("Repos", "Error al obtener los chats del usuario", e)
+        }
+        return chats
+    }
 
     suspend fun getChatId(otroUsuario: User, usuarioId: String): String? {
         var chatId:String = ""
