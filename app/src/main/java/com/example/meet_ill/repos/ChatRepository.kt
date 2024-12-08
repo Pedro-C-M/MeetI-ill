@@ -22,34 +22,63 @@ class ChatRepository {
     suspend fun getChatsForUser(userId: String): List<ChatRecientes> {
         val chats = mutableListOf<ChatRecientes>()
         try {
+            // Obtenemos los documentos donde el usuario es participante
             val documents = db.whereArrayContains("participantes", userId).get().await()
+
             for (document in documents) {
                 val participantes = document.get("participantes") as? List<String> ?: emptyList()
-                val lastMessage = document.getString("ultimoMensaje") ?: ""
-                val timestamp = document.getTimestamp("ultimoMensajeHora")?.toDate()
-                val formattedTime = timestamp?.let {
-                    SimpleDateFormat("hh:mm a", Locale.getDefault()).format(it)
-                } ?: ""
 
+                // Obtenemos el ID del otro usuario
                 val otroUsuarioId = participantes.first { it != userId }
-                val otroUsuario = Firebase.firestore.collection("users").document(otroUsuarioId).get().await()
-                val otroUsuarioNombre = otroUsuario.getString("apodo") ?: ""
-                val otroUsuarioImagen = otroUsuario.getString("imagenPerfil") ?: ""
+                val otroUsuarioDoc = Firebase.firestore.collection("users").document(otroUsuarioId).get().await()
+                val otroUsuarioNombre = otroUsuarioDoc.getString("apodo") ?: ""
+                val otroUsuarioImagen = otroUsuarioDoc.getString("imagenPerfil") ?: ""
 
-                chats.add(
-                    ChatRecientes(
-                        idChat = document.id,
-                        nombre = otroUsuarioNombre,
-                        imagenPerfil = otroUsuarioImagen,
-                        ultimoMensaje = lastMessage,
-                        horaUltimoMensaje = formattedTime
-                    )
+                // Obtener el ID del chat
+                val otroUsuario = User(
+                    idUsuario = otroUsuarioId,
+                    nombreUsuario = otroUsuarioDoc.getString("apodo") ?: "",
+                    nombreReal = otroUsuarioDoc.getString("name") ?: "",
+                    correo = otroUsuarioDoc.getString("email") ?: "",
+                    patologias = (otroUsuarioDoc.get("patologias") as? List<String>)?.toMutableList() ?: mutableListOf(),
+                    grupsIds = (otroUsuarioDoc.get("groupsIds") as? List<String>)?.toMutableList() ?: mutableListOf(),
+                    imagenPerfil = otroUsuarioDoc.getString("imagenPerfil") ?: ""
                 )
+
+                val chatId = getChatId(otroUsuario, userId)
+                if (chatId != null) {
+                    // Obtener los mensajes del chat
+                    val mensajes = getMessageById(chatId)
+                    if (mensajes != null && mensajes.isNotEmpty()) {
+                        val ultimoMensaje = mensajes.last()
+                        chats.add(
+                            ChatRecientes(
+                                idChat = chatId,
+                                nombre = otroUsuarioNombre,
+                                idUsuario= otroUsuarioId,
+                                imagenPerfil = otroUsuarioImagen,
+                                ultimoMensaje = ultimoMensaje.content,
+                                horaUltimoMensaje = ultimoMensaje.fecha
+                            )
+                        )
+                    } else {
+                        // Chat sin mensajes
+                        chats.add(
+                            ChatRecientes(
+                                idChat = chatId,
+                                nombre = otroUsuarioNombre,
+                                imagenPerfil = otroUsuarioImagen,
+                                ultimoMensaje = "Sin mensajes",
+                                horaUltimoMensaje = ""
+                            )
+                        )
+                    }
+                }
             }
         } catch (e: Exception) {
             Log.e("Repos", "Error al obtener los chats del usuario", e)
         }
-        return chats
+        return chats.sortedByDescending { it.horaUltimoMensaje }
     }
 
     suspend fun getChatId(otroUsuario: User, usuarioId: String): String? {

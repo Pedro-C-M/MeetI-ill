@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ChatPrivadoMainFragment">
+    tools:context=".ChatRecientesFragment">
 
     <!-- RecyclerView para mostrar los chats -->
     <androidx.recyclerview.widget.RecyclerView
@@ -16,7 +16,7 @@
     android:padding="8dp"
     android:clipToPadding="false"
     android:scrollbars="vertical"
-    tools:listitem="@layout/chatrecientes"/>
+    tools:listitem="@layout/recycler_reciente_item"/>
 
     <!-- Mensaje para indicar que no hay mensajes -->
     <TextView

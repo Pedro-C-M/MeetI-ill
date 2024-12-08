@@ -1,7 +1,7 @@
 package com.example.meet_ill
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,16 +14,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.meet_ill.adapters.RecentChatAdapter
 import com.example.meet_ill.adapters.onChatClicked
 import com.example.meet_ill.data_classes.ChatRecientes
+import com.example.meet_ill.data_classes.User
 import com.example.meet_ill.repos.ChatRepository
 import com.example.meet_ill.repos.UserRepository
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 
 
-class ChatPrivadoMainFragment : Fragment() {
+class ChatRecientesFragment : Fragment() {
 
     private val userRepository = UserRepository()
     private val chatRepository = ChatRepository()
@@ -39,7 +36,7 @@ class ChatPrivadoMainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_chat_privado_main, container, false)
+        val view = inflater.inflate(R.layout.fragment_chat_recientes, container, false)
         setupRecyclerView(view)
         cargarChatsRecientes(view)
         return view
@@ -54,8 +51,23 @@ class ChatPrivadoMainFragment : Fragment() {
         // Configurar un listener opcional en el adaptador
         adapter.setOnChatClickListener(object : onChatClicked {
             override fun getOnChatCLickedItem(position: Int, chatList: ChatRecientes) {
-                Toast.makeText(requireContext(), "Chat con ${chatList.nombre}", Toast.LENGTH_SHORT).show()
-                // Aquí podrías iniciar una nueva actividad o fragmento
+                Toast.makeText(requireContext(), "Cargando chat con ${chatList.nombre}...", Toast.LENGTH_SHORT).show()
+
+                // Obtener el usuario desde el repositorio
+                lifecycleScope.launch {
+                    val user = userRepository.getUserById(chatList.idUsuario)
+
+                    if (user != null) {
+                        // Crear un Intent para iniciar la actividad de chat privado
+                        val intent = Intent(requireContext(), PrivateChatActivity::class.java)
+                        intent.putExtra("user", user)
+
+                        // Iniciar la actividad
+                        startActivity(intent)
+                    } else {
+                        Toast.makeText(requireContext(), "Usuario no encontrado", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         })
     }

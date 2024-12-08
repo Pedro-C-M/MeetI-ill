@@ -7,6 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class ChatRecientes(
     val idChat: String = "",
     val nombre: String = "",
+    val idUsuario: String = "",
     val imagenPerfil: String = "",
     val ultimoMensaje: String = "",
     val horaUltimoMensaje: String = ""

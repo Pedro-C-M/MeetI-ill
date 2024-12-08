@@ -13,39 +13,27 @@ class RecentChatAdapter : RecyclerView.Adapter<MyChatListHolder>() {
 
     var listOfChats = listOf<ChatRecientes>()
     private var listener: onChatClicked? = null
-    var chatShitModal = ChatRecientes()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyChatListHolder {
-
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.chatrecientes, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_reciente_item, parent, false)
         return MyChatListHolder(view)
-
-
     }
 
     override fun getItemCount(): Int {
-
         return listOfChats.size
-
-
     }
-
 
     fun setList(list: List<ChatRecientes>) {
         this.listOfChats = list
-
     }
 
     override fun onBindViewHolder(holder: MyChatListHolder, position: Int) {
-
         val chat = listOfChats[position]
         holder.userName.text = chat.nombre
-        val ss=chat.ultimoMensaje
         holder.lastMessage.text = chat.ultimoMensaje
         holder.timeView.text = chat.horaUltimoMensaje
         //Glide.with(holder.itemView.context).load(chat.imagenPerfil).into(holder.imageView)
-
         holder.itemView.setOnClickListener {
             listener?.getOnChatCLickedItem(position, chat)
         }

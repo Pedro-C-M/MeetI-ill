@@ -6,7 +6,7 @@
         android:icon="@drawable/grupo"
         android:title="Grupos" />
     <item
-        android:id="@+id/chatPrivadoMainFragment"
+        android:id="@+id/chatRecientesFragment"
         android:icon="@android:drawable/stat_notify_chat"
         android:title="Chat privado" />
     <item
