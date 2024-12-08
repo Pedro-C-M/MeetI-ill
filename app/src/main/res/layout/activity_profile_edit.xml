@@ -4,7 +4,52 @@
     android:layout_height="match_parent"
     android:padding="16dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!-- Cabecera -->
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:padding="1dp"
+        android:backgroundTint="@color/cardview_dark_background"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Botón atrás -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="-5dp"
+            android:layout_marginLeft="-15dp"
+            android:src="@android:drawable/ic_menu_revert"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Atrás" />
+
+        <!-- Título -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="164dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="180dp"
+            android:layout_marginLeft="-35dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Editar Perfil"
+            android:textColor="@android:color/black"
+            android:textSize="28sp" />
+    </LinearLayout>
+    <View
+        android:id="@+id/headerSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
     <!-- Contenedor de la imagen de perfil y el icono de editar -->
     <FrameLayout
         android:id="@+id/imgProfileContainer"
@@ -19,13 +64,14 @@
             android:id="@+id/imgProfile"
             android:layout_width="174dp"
             android:layout_height="174dp"
+            android:layout_marginTop="65dp"
             android:scaleType="centerCrop" />
 
         <ImageView
             android:id="@+id/btnEditImage"
             android:layout_width="42dp"
             android:layout_height="42dp"
-            android:layout_margin="4dp"
+            android:layout_marginTop="65dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="4dp"
             android:src="@drawable/ic_edit"

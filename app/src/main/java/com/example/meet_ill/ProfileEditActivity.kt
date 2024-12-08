@@ -13,6 +13,7 @@ import android.util.Base64
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
@@ -77,6 +78,11 @@ class ProfileEditActivity : AppCompatActivity() {
 
         imgProfile.setOnClickListener {
             seleccionarImagen()
+        }
+
+        val btnBack = findViewById<ImageButton>(R.id.btnBack)
+        btnBack.setOnClickListener {
+            finish() // Finaliza esta actividad y regresa a la anterior.
         }
 
         rellenaHints()
