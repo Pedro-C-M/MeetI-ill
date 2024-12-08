@@ -1,49 +1,98 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Foto de perfil y contenedor del nombre y botón editar -->
+    <!-- Cabecera -->
     <LinearLayout
+        android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:padding="1dp"
+        android:backgroundTint="@color/cardview_dark_background"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Foto de perfil -->
-        <ImageView
-            android:id="@+id/imgProfile"
-            android:layout_width="133dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:layout_marginEnd="16dp"
-            android:scaleType="centerCrop" />
+        <!-- Botón atrás -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="-5dp"
+            android:layout_marginLeft="-15dp"
+            android:src="@android:drawable/ic_menu_revert"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Atrás" />
 
-        <!-- Contenedor de nombre y botón de editar -->
-        <LinearLayout
+        <!-- Título -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Perfil"
+            android:layout_marginRight="220dp"
+            android:layout_marginLeft="-75dp"
+            android:layout_marginTop="5dp"
+            android:textColor="@android:color/black"
+            android:textSize="28sp"
+            android:gravity="center" />
+    </LinearLayout>
+    <View
+        android:id="@+id/headerSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Foto de perfil -->
+    <ImageView
+        android:id="@+id/imgProfile"
+        android:layout_width="133dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="10dp"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        android:layout_marginEnd="16dp" />
+
+    <!-- Nombre de usuario y botón editar -->
+    <LinearLayout
+        android:id="@+id/linearLayoutUsernameEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toEndOf="@id/imgProfile"
+        app:layout_constraintTop_toTopOf="@id/imgProfile"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center_vertical">
+
+        <!-- Nombre de usuario -->
+        <TextView
+            android:id="@+id/tvUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_vertical">
+            android:text="Username: @usuario"
+            android:textStyle="bold"
+            android:textSize="25sp"
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="8dp" />
 
-            <!-- Nombre de usuario -->
-            <TextView
-                android:id="@+id/tvUsername"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Username: @usuario"
-                android:textSize="20sp"
-                android:layout_marginTop="25dp"
-                android:layout_marginBottom="8dp" />
-
-            <Button
-                android:id="@+id/btnEditUser"
-                android:layout_width="220dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="25dp"
-                android:text="Editar Usuario" />
-        </LinearLayout>
-
+        <!-- Botón de editar -->
+        <Button
+            android:id="@+id/btnEditUser"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:text="Editar Usuario"
+            android:layout_marginTop="25dp" />
     </LinearLayout>
 
     <!-- Nombre real -->
@@ -51,26 +100,32 @@
         android:id="@+id/tvRealName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:layout_marginBottom="16dp"
         android:text="Nombre real: Juan Pérez"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        app:layout_constraintTop_toBottomOf="@id/linearLayoutUsernameEdit"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="16dp" />
 
+    <!-- Correo -->
     <TextView
         android:id="@+id/tvCorreo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="16dp"
         android:text="Email: correo@email.com"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        app:layout_constraintTop_toBottomOf="@id/tvRealName"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="20dp" />
 
+    <!-- Etiqueta patologías -->
     <TextView
         android:id="@+id/tvPathologyLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Patologías:"
-        android:textSize="20sp" />
+        android:layout_marginTop="14dp"
+        android:textSize="20sp"
+        app:layout_constraintTop_toBottomOf="@id/tvCorreo" />
 
     <!-- Contenedor dinámico para patologías -->
     <LinearLayout
@@ -79,19 +134,22 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="5dp"
-        android:paddingStart="16dp">
+        android:paddingStart="16dp"
+        app:layout_constraintTop_toBottomOf="@id/tvPathologyLabel" />
 
-        <!-- Las patologías se añadirán dinámicamente aquí -->
-    </LinearLayout>
+    <!-- Botón cerrar sesión -->
     <Button
         android:id="@+id/btnLogout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@color/design_default_color_error"
         android:text="Cerrar Sesión"
         android:textColor="@android:color/white"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:backgroundTint="@color/design_default_color_error"
+        app:layout_constraintTop_toBottomOf="@id/linearLayoutPatologias"
+        android:layout_marginTop="20dp" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
 

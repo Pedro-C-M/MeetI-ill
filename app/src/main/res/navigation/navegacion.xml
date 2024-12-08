@@ -26,10 +26,11 @@
     </fragment>
 
     <fragment
-        android:id="@+id/chatPrivadoMainFragment"
-        android:name="com.example.meet_ill.chatPrivadoMainFragment"
-        android:label="fragment_chat_privado_main"
-        tools:layout="@layout/fragment_chat_privado_main" />
+        android:id="@+id/chatRecientesFragment"
+        android:name="com.example.meet_ill.ChatRecientesFragment"
+        android:label="fragment_chat_recientes"
+        tools:layout="@layout/fragment_chat_recientes" />
+
     <fragment
         android:id="@+id/buscarGruposMainFragment"
         android:name="com.example.meet_ill.BuscarGruposMainFragment"

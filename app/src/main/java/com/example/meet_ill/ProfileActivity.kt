@@ -4,8 +4,10 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.widget.ImageView
 import android.os.Bundle
+import android.util.Base64
 import android.widget.TextView
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -57,6 +59,14 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(intent)
             finish() // Finaliza la actividad actual
         }
+
+        val btnBack = findViewById<ImageButton>(R.id.btnBack)
+        btnBack.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(intent)
+            finish() // Finaliza la actividad actual para evitar ciclos.
+        }
     }
 
     //Hace que te vayas directamente al Main activity, para que funcione el boton de ir pa tras
@@ -70,8 +80,6 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun cargarDatosUsuario() {
-        val currentUser = FirebaseAuth.getInstance().currentUser
-
         lifecycleScope.launch() {
             val user = userRepository.getUserById(currentUserId)
             if (user != null) {
@@ -105,30 +113,14 @@ class ProfileActivity : AppCompatActivity() {
     }
 
 
-    //todo no funciona por ahora
     private fun cargarImagen(imagenPerfil: String) {
-
-        val imageUrl = ""
-        if (!imageUrl.isNullOrEmpty()) {
-
-            val storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl)
-
-
-            val localFile = File.createTempFile("profile_image", "jpg")
-
-            storageReference.getFile(localFile)
-                .addOnSuccessListener {
-                    val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
-                    imgProfile.setImageBitmap(bitmap)
-                }
-                .addOnFailureListener {
-                    imgProfile.setImageResource(R.drawable.default_profile_image)
-                    Toast.makeText(this, "Error al cargar la imagen", Toast.LENGTH_SHORT).show()
-                }
-        } else {
+        try {
+            val decodedBytes = Base64.decode(imagenPerfil, Base64.NO_WRAP)
+            val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+            imgProfile.setImageBitmap(bitmap)
+        } catch (e: Exception) {
+            e.printStackTrace()
             imgProfile.setImageResource(R.drawable.default_profile_image)
         }
-
-
     }
 }
