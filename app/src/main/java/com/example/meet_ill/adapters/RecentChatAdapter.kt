@@ -1,5 +1,7 @@
 package com.example.meet_ill.adapters
 
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,9 +35,24 @@ class RecentChatAdapter : RecyclerView.Adapter<MyChatListHolder>() {
         holder.userName.text = chat.nombre
         holder.lastMessage.text = chat.ultimoMensaje
         holder.timeView.text = chat.horaUltimoMensaje
-        //Glide.with(holder.itemView.context).load(chat.imagenPerfil).into(holder.imageView)
+        if (chat.imagenPerfil.isNotEmpty()) {
+            cargarImagenBase64(chat.imagenPerfil, holder.imageView)
+        } else {
+            holder.imageView.setImageResource(R.drawable.default_profile_image)
+        }
         holder.itemView.setOnClickListener {
             listener?.getOnChatCLickedItem(position, chat)
+        }
+    }
+
+    private fun cargarImagenBase64(base64String: String, imageView: CircleImageView) {
+        try {
+            val decodedBytes = Base64.decode(base64String, Base64.NO_WRAP)
+            val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+            imageView.setImageBitmap(bitmap)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            imageView.setImageResource(R.drawable.default_profile_image)
         }
     }
 
