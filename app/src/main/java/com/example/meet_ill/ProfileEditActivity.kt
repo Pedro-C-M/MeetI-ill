@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Base64
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -92,21 +93,18 @@ class ProfileEditActivity : AppCompatActivity() {
 
     //TODO Copiar esto para convertir las imagenes y cargarlas
     private fun cargarImagen() {
-        lifecycleScope.launch() {
-            val user = userRepository.getUserById(currentUserId)
-            if (user != null) {
-                convertir64aImg(user.imagenPerfil)
+        lifecycleScope.launch {
+            try {
+                val bitmap = userRepository.obtenerImgUserEnSesion()
+                if (bitmap != null) {
+                    imgProfile.setImageBitmap(bitmap)
+                } else {
+                    imgProfile.setImageResource(R.drawable.default_profile_image) // Imagen predeterminada si no hay imagen
+                }
+            } catch (e: Exception) {
+                Log.e("cargarImagen", "Error al cargar la imagen del usuario", e)
+                imgProfile.setImageResource(R.drawable.default_profile_image) // Imagen predeterminada en caso de error
             }
-        }
-    }
-    private fun convertir64aImg(imagenPerfil: String) {
-        try {
-            val decodedBytes = Base64.decode(imagenPerfil, Base64.NO_WRAP)
-            val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-            imgProfile.setImageBitmap(bitmap)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            imgProfile.setImageResource(R.drawable.default_profile_image)
         }
     }
 
