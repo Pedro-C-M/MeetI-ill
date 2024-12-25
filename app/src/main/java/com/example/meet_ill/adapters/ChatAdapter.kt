@@ -10,7 +10,7 @@ import com.example.meet_ill.data_classes.Message
 import com.example.meet_ill.R
 import kotlin.random.Random
 
-class ChatAdapter(val listaMessages: List<Message>): RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
+class ChatAdapter(val listaMessages: MutableList<Message>): RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
 
 
 
@@ -20,9 +20,6 @@ class ChatAdapter(val listaMessages: List<Message>): RecyclerView.Adapter<ChatAd
         private  var tvName: TextView = view.findViewById(R.id.tvName)
         private var tvFecha: TextView = view.findViewById(R.id.tvMessageTime)
         private var message: Message? = null
-        //private var colores: HashMap<String, String> = hashMapOf()
-
-
 
 
         fun bind(message: Message){
@@ -30,7 +27,6 @@ class ChatAdapter(val listaMessages: List<Message>): RecyclerView.Adapter<ChatAd
             tvFecha.text = message.fecha
             if(message.isReceived) {
                 tvName.text = message.user
-                //cambiarColor(tvName,message.user)
             }
             else{
                 tvName.text=""
@@ -38,31 +34,7 @@ class ChatAdapter(val listaMessages: List<Message>): RecyclerView.Adapter<ChatAd
 
         }
 
-        /**
-        private fun cambiarColor(tvName: TextView, nombre: String) {
 
-            if(!colores.containsKey(nombre)) {
-                val numero = Random.nextInt(1, 11)
-                var color = ""
-
-                when (numero) {
-                    1 -> color = "#FF5722"
-                    2 -> color = "#4CAF50"
-                    3 -> color = "#2196F3"
-                    4 -> color = "#FFC107"
-                    5 -> color = "#9C27B0"
-                    6 -> color = "#E91E63"
-                    7 -> color = "#00BCD4"
-                    8 -> color = "#FF9800"
-                    9 -> color = "#3F51B5"
-                    10 -> color = "#8BC34A"
-                }
-
-                colores[nombre] = color
-            }
-            tvName.setTextColor(Color.parseColor(colores.get(nombre)))
-        }
-        **/
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -98,4 +70,12 @@ class ChatAdapter(val listaMessages: List<Message>): RecyclerView.Adapter<ChatAd
         }
         return -1;
     }
+
+    fun updateMessages(newMessages: List<Message>) {
+        listaMessages.clear()
+        listaMessages.addAll(newMessages)
+        notifyDataSetChanged()
+    }
+
+
 }

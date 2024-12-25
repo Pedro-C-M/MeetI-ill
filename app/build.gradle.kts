@@ -54,6 +54,9 @@ dependencies {
     implementation(libs.firebase.auth)
     //Para la bd
     implementation(libs.firebase.firestore)
+    implementation(libs.google.firebase.database.ktx)
+    implementation(libs.firebase.ui.auth)
+    implementation(libs.firebase.ui.database)
 
     implementation(libs.material.v190)
 
