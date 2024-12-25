@@ -108,7 +108,7 @@ class GroupInfoActivity : AppCompatActivity() {
         recyclerParticipantes.layoutManager = LinearLayoutManager(applicationContext).apply {
         }
 
-        recyclerParticipantes.adapter = ParticipantesAdapter(listaParticipantes){ participante ->
+        recyclerParticipantes.adapter = ParticipantesAdapter(listaParticipantes, coroutineScope = lifecycleScope ){ participante ->
             val intent = Intent(applicationContext, PrivateChatActivity::class.java)
             intent.putExtra("user", participante)
             launcher.launch(intent)

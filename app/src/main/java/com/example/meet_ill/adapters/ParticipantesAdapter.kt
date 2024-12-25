@@ -6,27 +6,36 @@ import android.view.ViewGroup
 
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
+import com.example.meet_ill.R
 
 import com.example.meet_ill.data_classes.User
 
 import com.example.meet_ill.databinding.RecyclerParticipanteItemBinding
+import com.example.meet_ill.repos.UserRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 
-
-
-class ParticipantesAdapter(val listaParcitipantes: List<User>,
+class ParticipantesAdapter(val listaParcitipantes: List<User>,   private val coroutineScope: CoroutineScope,
                            private val onClickListener: (User?) -> Unit): RecyclerView.Adapter<ParticipantesAdapter.ViewHolder>() {
 
 
 
 
-    class ViewHolder(private val binding: RecyclerParticipanteItemBinding,onClickListener: (User?) -> Unit): RecyclerView.ViewHolder(binding.root){
+    class ViewHolder(private val binding: RecyclerParticipanteItemBinding, private val coroutineScope: CoroutineScope, onClickListener: (User?) -> Unit): RecyclerView.ViewHolder(binding.root){
 
         private var usuarioActual: User? = null
-
+        private val userRepository = UserRepository()
 
         fun bind(participante: User){
-            binding.ivImagenPerfil.load(participante.imagenPerfil)
+            coroutineScope.launch {
+                val imageBitmap = userRepository.obtenerImgUserParametro(participante.idUsuario)
+                if (imageBitmap != null) {
+                    binding.ivImagenPerfil.setImageBitmap(imageBitmap)
+                } else {
+                    binding.ivImagenPerfil.setImageResource(R.drawable.default_profile_image) // Imagen predeterminada
+                }
+            }
             binding.tvNombre.text = participante.nombreUsuario
             usuarioActual = participante
             //la funcionalidad del botón más tarde
@@ -45,7 +54,7 @@ class ParticipantesAdapter(val listaParcitipantes: List<User>,
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {;
 
         val binding = RecyclerParticipanteItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding,onClickListener)
+        return ViewHolder(binding,coroutineScope,onClickListener)
     }
 
     override fun getItemCount(): Int {
