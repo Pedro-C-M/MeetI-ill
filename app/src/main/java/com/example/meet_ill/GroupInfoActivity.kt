@@ -1,6 +1,7 @@
 package com.example.meet_ill
 
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -22,6 +23,7 @@ import com.example.meet_ill.data_classes.Grupo
 import com.example.meet_ill.data_classes.User
 import com.example.meet_ill.databinding.ActivityGroupInfoBinding
 import com.example.meet_ill.repos.GroupRepository
+import com.example.meet_ill.repos.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,6 +38,9 @@ class GroupInfoActivity : AppCompatActivity() {
     private var groupRepo: GroupRepository = GroupRepository()
     private lateinit var grupo: Grupo
     private lateinit var launcher : ActivityResultLauncher<Intent>
+
+    private var userRepo: UserRepository = UserRepository()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,16 +108,26 @@ class GroupInfoActivity : AppCompatActivity() {
 
 
     private fun inicializaRecyclerParticipantes(){
-        recyclerParticipantes = binding.rvParticipantes
 
-        recyclerParticipantes.layoutManager = LinearLayoutManager(applicationContext).apply {
-        }
+        var context: Context = this
 
-        recyclerParticipantes.adapter = ParticipantesAdapter(listaParticipantes, coroutineScope = lifecycleScope ){ participante ->
-            val intent = Intent(applicationContext, PrivateChatActivity::class.java)
-            intent.putExtra("user", participante)
-            launcher.launch(intent)
-            finish()
+        lifecycleScope.launch(Dispatchers.IO) {
+
+        var user: User? =  userRepo.getUserById(FirebaseAuth.getInstance().currentUser?.uid.toString())
+
+            withContext(Dispatchers.Main) {
+                recyclerParticipantes = binding.rvParticipantes
+
+                recyclerParticipantes.layoutManager = LinearLayoutManager(applicationContext).apply {
+                }
+
+                recyclerParticipantes.adapter = ParticipantesAdapter(listaParticipantes, coroutineScope = lifecycleScope , user!!.tipoUsuario, grupo.idGrupo, context){ participante ->
+                    val intent = Intent(applicationContext, PrivateChatActivity::class.java)
+                    intent.putExtra("user", participante)
+                    launcher.launch(intent)
+                    finish()
+                }
+            }
         }
 
     }
