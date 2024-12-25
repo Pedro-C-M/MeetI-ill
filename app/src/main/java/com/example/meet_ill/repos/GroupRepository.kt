@@ -102,9 +102,10 @@ class GroupRepository {
                     val nombre = usuario.getString("apodo")!!
                     val imagen = usuario.getString("imagenPerfil").orEmpty()
                     val nombreReal = usuario.getString("name")!!
+                    val tipoUser = usuario.getString("user-type") ?: "user"
                     val finalUser = User(
                         participant, nombre, nombreReal, "", mutableListOf(),
-                        mutableListOf(), imagen
+                        mutableListOf(),imagen,tipoUser
                     )
 
                     participants.add(finalUser)
