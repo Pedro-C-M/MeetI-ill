@@ -56,7 +56,6 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var bBack: Button
     private lateinit var eTMessage: EditText
     private var userRepo: UserRepository = UserRepository()
-    private var listaMensajes: MutableList<Message> = mutableListOf()
     private lateinit var grupo: Grupo
     private lateinit var launcher : ActivityResultLauncher<Intent>
 
