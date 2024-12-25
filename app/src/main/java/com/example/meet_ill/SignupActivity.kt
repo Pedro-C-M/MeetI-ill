@@ -116,6 +116,7 @@ class SignupActivity : AppCompatActivity() {
                     "apodo" to nicknameEditText.text.toString(),
                     "email" to emailEditText.text.toString(),
                     "name" to nameEditText.text.toString(),
+                    "user-type" to "user",
                     "groupsIds" to mutableListOf<String>()
                 )
             )

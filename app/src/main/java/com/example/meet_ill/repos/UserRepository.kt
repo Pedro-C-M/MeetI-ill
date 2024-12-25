@@ -29,7 +29,8 @@ class UserRepository {
                     correo = document.getString("email") ?: "",
                     patologias = (document.get("patologias") as? List<String>)?.toMutableList() ?: mutableListOf(),
                     grupsIds = (document.get("groupsIds") as? List<String>)?.toMutableList() ?: mutableListOf(),
-                    imagenPerfil = document.getString("imagenPerfil") ?: ""
+                    imagenPerfil = document.getString("imagenPerfil") ?: "",
+                    tipoUsuarioStr = document.getString("user-type") ?: "user"//Si no hay nada le meto user
                 )
             } else {
                 null // Si no existe el documento

@@ -42,7 +42,8 @@ class ChatRepository {
                     correo = otroUsuarioDoc.getString("email") ?: "",
                     patologias = (otroUsuarioDoc.get("patologias") as? List<String>)?.toMutableList() ?: mutableListOf(),
                     grupsIds = (otroUsuarioDoc.get("groupsIds") as? List<String>)?.toMutableList() ?: mutableListOf(),
-                    imagenPerfil = otroUsuarioDoc.getString("imagenPerfil") ?: ""
+                    imagenPerfil = otroUsuarioDoc.getString("imagenPerfil") ?: "",
+                    tipoUsuarioStr = document.getString("user-type") ?: "user"//Si no hay nada le meto user
                 )
 
                 val chatId = getChatId(otroUsuario, userId)
