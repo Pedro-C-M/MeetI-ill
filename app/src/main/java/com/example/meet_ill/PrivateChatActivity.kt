@@ -1,5 +1,6 @@
 package com.example.meet_ill
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -81,7 +82,7 @@ class PrivateChatActivity : AppCompatActivity() {
             }
 
         onStart()
-
+        var context: Context = this
 
         lifecycleScope.launch(Dispatchers.IO) {
             chatId = chatRepo.getChatId(otroUsuario, usuarioId)!!
@@ -90,10 +91,14 @@ class PrivateChatActivity : AppCompatActivity() {
             // Actualizar la UI con los mensajes
             withContext(Dispatchers.Main) {
 
+                lifecycleScope.launch(Dispatchers.IO) {
+                    var user: User? =
+                        userRepo.getUserById(FirebaseAuth.getInstance().currentUser?.uid.toString())
 
+                    withContext(Dispatchers.Main) {
                 //Recycler
                 recyclerChats = binding.rVMessages
-                val chatAdapter = ChatAdapter(mutableListOf())
+                val chatAdapter = ChatAdapter(mutableListOf(),context, user!!.tipoUsuario)
                 recyclerChats.adapter = chatAdapter
                 recyclerChats.layoutManager = LinearLayoutManager(applicationContext).apply {
                     stackFromEnd = true
@@ -151,7 +156,8 @@ class PrivateChatActivity : AppCompatActivity() {
 
 
 
-
+}
+        }
     }
 
     private fun cambiarFecha(messages: MutableList<Message>): MutableList<Message> {
@@ -165,7 +171,7 @@ class PrivateChatActivity : AppCompatActivity() {
             devolver.add(
                 Message(
                     message.content, message.isReceived, message.user, formattedDate,
-                    message.urlFoto
+                    message.urlFoto, message.messageId
                 )
             )
         }
@@ -231,12 +237,12 @@ class PrivateChatActivity : AppCompatActivity() {
         // Crear una instancia de Date con el timestamp
 
         if (sender.equals(FirebaseAuth.getInstance().currentUser?.uid.toString())) {
-            message = Message(content, false, "", fecha, "")
+            message = Message(content, false, "", fecha, "", message.messageId)
         } else {
             usuario = withContext(Dispatchers.IO) {
                 userRepo.getUserById(sender)!!
             }
-            message = Message(content, true, usuario.nombreUsuario, fecha, "")
+            message = Message(content, true, usuario.nombreUsuario, fecha, "",message.messageId)
         }
 
 

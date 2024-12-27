@@ -114,6 +114,7 @@ class ChatRepository {
             val document = db.document(chatId).collection("mensajesChat").
             orderBy("timeSent", Query.Direction.ASCENDING).get().await()
             for(message in document){
+                val mssgeId = message.id
                 val sender = message.getString("sender")
                 val text = message.getString("texto")
                 val timestamp = message.getTimestamp("timeSent")
@@ -127,11 +128,11 @@ class ChatRepository {
 
 
                 if(sender.toString().equals(FirebaseAuth.getInstance().currentUser?.uid.toString())) {
-                    val message = Message(text.toString(), false,nombre.toString(),formattedTime,"")
+                    val message = Message(text.toString(), false,nombre.toString(),formattedTime,"", mssgeId)
                     messages.add(message)
                 }
                 else{
-                    val message = Message(text.toString(), true,nombre.toString(),formattedTime,"")
+                    val message = Message(text.toString(), true,nombre.toString(),formattedTime,"", mssgeId)
                     messages.add(message)
                 }
 
@@ -161,6 +162,10 @@ class ChatRepository {
             Log.e("Repos", "Error al enviar el mensaje", e)
             null
         }
+    }
+
+    fun deleteMessage(messgId: String) {
+
     }
 
 }

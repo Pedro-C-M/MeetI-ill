@@ -43,7 +43,6 @@ class ParticipantesAdapter(val listaParcitipantes: List<User>, private val corou
             binding.tvNombre.text = participante.nombreUsuario
             usuarioActual = participante
             //la funcionalidad del botón más tarde
-
         }
 
         init{

@@ -71,11 +71,11 @@ class GroupRepository {
 
 
                 if(sender.toString().equals(FirebaseAuth.getInstance().currentUser?.uid.toString())) {
-                    val message = Message(text.toString(), false,nombre.toString(),formattedTime,"")
+                    val message = Message(text.toString(), false,nombre.toString(),formattedTime,"", message.id)
                     messages.add(message)
                 }
                 else{
-                    val message = Message(text.toString(), true,nombre.toString(),formattedTime,"")
+                    val message = Message(text.toString(), true,nombre.toString(),formattedTime,"", message.id)
                     messages.add(message)
                 }
 
