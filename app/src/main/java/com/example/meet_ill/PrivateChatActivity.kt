@@ -125,6 +125,7 @@ class PrivateChatActivity : AppCompatActivity() {
                             deferred.await()  // Espera a que se complete
                             val ordenados = cambiarFecha(messages)
                             chatAdapter.updateMessages(ordenados)  // Actualiza el adaptador
+                            binding.rVMessages.scrollToPosition(ordenados.size - 1)
                         }
                     }
 

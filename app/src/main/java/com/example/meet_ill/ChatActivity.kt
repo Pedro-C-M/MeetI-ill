@@ -132,6 +132,7 @@ class ChatActivity : AppCompatActivity() {
                     deferred.await()  // Espera a que se complete
                     val ordenados = cambiarFecha(messages)
                     chatAdapter.updateMessages(ordenados)  // Actualiza el adaptador
+                    recyclerChats.scrollToPosition(ordenados.size - 1)
                 }
             }
             override fun onCancelled(error: DatabaseError) {
