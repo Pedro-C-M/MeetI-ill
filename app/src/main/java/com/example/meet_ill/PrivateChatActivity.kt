@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import com.example.meet_ill.adapters.ChatAdapter
-import com.example.meet_ill.data_classes.Grupo
 import com.example.meet_ill.data_classes.Message
 import com.example.meet_ill.data_classes.User
 import com.example.meet_ill.databinding.ActivityChatBinding
@@ -98,7 +97,14 @@ class PrivateChatActivity : AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                 //Recycler
                 recyclerChats = binding.rVMessages
-                val chatAdapter = ChatAdapter(mutableListOf(),context, user!!.tipoUsuario)
+                val chatAdapter = ChatAdapter(
+                    mutableListOf(),
+                    context,
+                    user!!.tipoUsuario,
+                    chatId,
+                    1,//Para grupos 0 para chats 1
+                    coroutineScope = lifecycleScope
+                )
                 recyclerChats.adapter = chatAdapter
                 recyclerChats.layoutManager = LinearLayoutManager(applicationContext).apply {
                     stackFromEnd = true

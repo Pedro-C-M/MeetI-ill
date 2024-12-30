@@ -1,7 +1,7 @@
 package com.example.meet_ill.adapters
 
+import android.app.Activity
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,14 +10,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.meet_ill.data_classes.Message
 import com.example.meet_ill.R
 import com.example.meet_ill.repos.ChatRepository
-import com.example.meet_ill.repos.UserRepository
 import com.example.meet_ill.util.UserType
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlin.random.Random
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-class ChatAdapter(val listaMessages: MutableList<Message>, val context: Context, val tipoUsuario: UserType): RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
+class ChatAdapter(
+    val listaMessages: MutableList<Message>,
+    val context: Context,
+    val tipoUsuario: UserType,
+    val idGrupo: String,
+    val tipoChat: Int,//Para grupos 0 para chats 1
+    private val coroutineScope: CoroutineScope
+): RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View, private val tipoUsuario:UserType, private val context:Context): RecyclerView.ViewHolder(view){
+    class ViewHolder(view: View, private val tipoUsuario:UserType, private val context:Context, private val idGrupo: String, private val tipoChat: Int,  private val coroutineScope: CoroutineScope): RecyclerView.ViewHolder(view){
         private var tvMessage: TextView = view.findViewById(R.id.tvMessage)
         private  var tvName: TextView = view.findViewById(R.id.tvName)
         private var tvFecha: TextView = view.findViewById(R.id.tvMessageTime)
@@ -50,8 +57,21 @@ class ChatAdapter(val listaMessages: MutableList<Message>, val context: Context,
                 .setTitle("Eliminar mensaje")
                 .setMessage("¿Estás seguro de que deseas eliminar el mensaje \"${contentText}\" de ${user}")
                 .setPositiveButton("Eliminar") { dialog, _ ->
-                    messageRepository.deleteMessage(messgId)
-                    dialog.dismiss()
+                    coroutineScope.launch {
+                        if (tipoChat == 0)//Es grupo
+                        {
+                            messageRepository.deleteGroupMessage(idGrupo, messgId)
+                        } else if (tipoChat == 1)//Es chat privado
+                        {
+                            messageRepository.deletePrivateChatMessage(idGrupo, messgId)
+                        }
+
+                        dialog.dismiss()
+                        val activity = context as Activity
+                        val intent = activity.intent
+                        activity.finish()
+                        activity.startActivity(intent)
+                    }
                 }
                 .setNegativeButton("Cancelar") { dialog, _ ->
                     dialog.dismiss()
@@ -72,7 +92,7 @@ class ChatAdapter(val listaMessages: MutableList<Message>, val context: Context,
                 R.layout.recycler_message_item,parent,false)
         }
 
-        return ViewHolder(view,tipoUsuario,context)
+        return ViewHolder(view,tipoUsuario,context, idGrupo, tipoChat, coroutineScope)
     }
 
     override fun getItemCount(): Int {

@@ -3,8 +3,6 @@ package com.example.meet_ill
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -26,26 +24,19 @@ import com.example.meet_ill.adapters.ChatAdapter
 import com.example.meet_ill.data_classes.Grupo
 import com.example.meet_ill.data_classes.Message
 import com.example.meet_ill.data_classes.User
-import com.example.meet_ill.repos.GroupRepository
 import com.example.meet_ill.repos.UserRepository
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.getValue
-import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.random.Random
 
 class ChatActivity : AppCompatActivity() {
 
@@ -109,7 +100,7 @@ class ChatActivity : AppCompatActivity() {
 
                 //Recycler
                 recyclerChats = findViewById(R.id.rVMessages)
-                val chatAdapter = ChatAdapter(mutableListOf(), context, user!!.tipoUsuario)
+                val chatAdapter = ChatAdapter(mutableListOf(), context, user!!.tipoUsuario, grupo.idGrupo, 0, coroutineScope = lifecycleScope)//Para grupos 0 para chats 1
                 recyclerChats.adapter = chatAdapter
                 recyclerChats.layoutManager = LinearLayoutManager(applicationContext).apply {
                     stackFromEnd = true
