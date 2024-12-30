@@ -16,3 +16,7 @@ El primer prototipo mostraría algo tal que así:
 
 <img src="DocImages/prototipov01.PNG" alt="Primer prototipo de MEET-ILL" style="width:50%;">
 
+Para probar la aplicación como administrador utilizar:
+
+Correo: "admin@gmail.com"
+Contraseña: "123456"

@@ -7,6 +7,8 @@ import com.example.meet_ill.data_classes.User
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.database
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
@@ -114,6 +116,7 @@ class ChatRepository {
             val document = db.document(chatId).collection("mensajesChat").
             orderBy("timeSent", Query.Direction.ASCENDING).get().await()
             for(message in document){
+                val mssgeId = message.id
                 val sender = message.getString("sender")
                 val text = message.getString("texto")
                 val timestamp = message.getTimestamp("timeSent")
@@ -127,11 +130,11 @@ class ChatRepository {
 
 
                 if(sender.toString().equals(FirebaseAuth.getInstance().currentUser?.uid.toString())) {
-                    val message = Message(text.toString(), false,nombre.toString(),formattedTime,"")
+                    val message = Message(text.toString(), false,nombre.toString(),formattedTime,"", mssgeId)
                     messages.add(message)
                 }
                 else{
-                    val message = Message(text.toString(), true,nombre.toString(),formattedTime,"")
+                    val message = Message(text.toString(), true,nombre.toString(),formattedTime,"", mssgeId)
                     messages.add(message)
                 }
 
@@ -162,5 +165,83 @@ class ChatRepository {
             null
         }
     }
+
+    suspend fun deleteGroupMessage(idGrupo: String, messgId: String) {
+        /**val db_grupo = Firebase.firestore.collection("grupos")
+        try {
+            val document = db_grupo.document(idGrupo).collection("mensajesGrupo").document(messgId)
+
+            document.delete()
+                .addOnSuccessListener{
+                    Log.d("Repos", "Mensaje eliminado correctamente del grupo")
+                }
+                .addOnFailureListener {
+                    Log.e("Repos", "Error al eliminar el mensaje del grupo")
+                }
+        } catch (e: Exception) {
+            Log.e("Repos", "Error inesperado al intentar eliminar el mensaje del grupo", e)
+        }
+        **/
+        val database = FirebaseDatabase.getInstance("https://meet-ill-default-rtdb.europe-west1.firebasedatabase.app/")
+
+        try {
+            // Accedemos a la referencia del mensaje en la Realtime Database
+            val databaseRef = database.reference
+                .child("grupos")
+                .child(idGrupo)
+                .child("messages")
+                .child(messgId)
+
+            // Eliminamos el mensaje
+            databaseRef.removeValue()
+                .addOnSuccessListener {
+                    Log.d("Repos", "Mensaje eliminado correctamente del grupo")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Repos", "Error al eliminar el mensaje del grupo", e)
+                }
+        } catch (e: Exception) {
+            Log.e("Repos", "Error inesperado al intentar eliminar el mensaje del grupo", e)
+        }
+    }
+
+    suspend fun deletePrivateChatMessage(idGrupo: String, messgId: String) {
+        /**try {
+            val document = db.document(idGrupo).collection("mensajesChat").document(messgId)
+
+            document.delete()
+                .addOnSuccessListener{
+                    Log.d("Repos", "Mensaje eliminado correctamente del chat privado")
+                }
+                .addOnFailureListener {
+                    Log.e("Repos", "Error al eliminar el mensaje del chat privado")
+                }
+        } catch (e: Exception) {
+            Log.e("Repos", "Error inesperado al intentar eliminar el mensaje del chat privado", e)
+        }
+        */
+        val database = FirebaseDatabase.getInstance("https://meet-ill-default-rtdb.europe-west1.firebasedatabase.app/")
+
+        try {
+            // Accedemos a la referencia del mensaje en la Realtime Database
+            val databaseRef = database.reference
+                .child("chats")
+                .child(idGrupo)
+                .child("messages")
+                .child(messgId)
+
+            // Eliminamos el mensaje
+            databaseRef.removeValue()
+                .addOnSuccessListener {
+                    Log.d("Repos", "Mensaje eliminado correctamente del chat privado")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Repos", "Error al eliminar el mensaje del chat privado", e)
+                }
+        } catch (e: Exception) {
+            Log.e("Repos", "Error inesperado al intentar eliminar el mensaje del chat privado", e)
+        }
+    }
+
 
 }
