@@ -7,9 +7,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -19,6 +19,7 @@ import com.example.meet_ill.data_classes.User
 import com.example.meet_ill.databinding.FragmentHomeBinding
 import com.example.meet_ill.repos.GroupRepository
 import com.example.meet_ill.repos.UserRepository
+import com.example.meet_ill.viewmodels.HomeFragmentViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -32,13 +33,10 @@ class HomeFragment : Fragment() {
 
     private var userRepo: UserRepository = UserRepository()
     private var groupRepo: GroupRepository = GroupRepository()
-    private lateinit var launcher : ActivityResultLauncher<Intent>
+    private lateinit var launcher: ActivityResultLauncher<Intent>
 
+    private val viewModel: HomeFragmentViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,16 +49,38 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ resultado ->
+        launcher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { resultado ->
 
-           // var devuelto = resultado.data?.getStringExtra("despido")
-           // Toast.makeText(this, devuelto, Toast.LENGTH_LONG).show()
+                // var devuelto = resultado.data?.getStringExtra("despido")
+                // Toast.makeText(this, devuelto, Toast.LENGTH_LONG).show()
+            }
+        viewModel.getUserGroups(requireContext())
+
+        viewModel.groupsList.observe(viewLifecycleOwner) { groups ->
+            if (groups != null) {
+                binding.recyclerGrupos.layoutManager = GridLayoutManager(requireContext(), 2)
+                binding.recyclerGrupos.adapter = GroupAdapter(findNavController(), groups) { grupo ->
+                    val intent = Intent(requireActivity(), ChatActivity::class.java)
+                    intent.putExtra("grupo", grupo)
+                    launcher.launch(intent)
+                }
+            }
         }
-
-        generarRecyclerGrupos()
     }
 
-    private fun generarRecyclerGrupos() {
+    private fun generarRecyclerGrupos(groups: List<Grupo>) {
+        // Actualizamos el RecyclerView con los grupos obtenidos
+        binding.recyclerGrupos.layoutManager = GridLayoutManager(requireContext(), 2)
+        binding.recyclerGrupos.adapter = GroupAdapter(findNavController(), groups) { grupo ->
+            // Acción cuando se selecciona un grupo
+            val intent = Intent(requireActivity(), ChatActivity::class.java)
+            intent.putExtra("grupo", grupo)
+            launcher.launch(intent)
+        }
+    }
+}
+/**
         lifecycleScope.launch(Dispatchers.IO) {
             val user: User? = userRepo.getUserById(FirebaseAuth.getInstance().currentUser?.uid.toString())
             val listaGrupos: MutableList<Grupo> = mutableListOf()
@@ -114,4 +134,4 @@ class HomeFragment : Fragment() {
             urlImagen = R.drawable.fondo1
         )
     }
-}
+}**/

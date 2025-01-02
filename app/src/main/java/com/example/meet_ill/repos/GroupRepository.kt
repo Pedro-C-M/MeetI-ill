@@ -23,6 +23,7 @@ class GroupRepository {
     private val db = Firebase.firestore.collection("grupos")
 
     suspend fun getGrupoById(groupId : String, context:Context):Grupo?{
+        Log.e("Repos", "OWOWOWO")
         return try {
             val document = db.document(groupId).get().await()
             if(!document.exists()){
