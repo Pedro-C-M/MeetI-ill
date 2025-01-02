@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -16,6 +18,7 @@ import com.example.meet_ill.data_classes.User
 import com.example.meet_ill.databinding.FragmentBuscarGruposMainBinding
 import com.example.meet_ill.repos.GroupRepository
 import com.example.meet_ill.repos.UserRepository
+import com.example.meet_ill.viewmodels.BuscarGruposFragmentViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,14 +28,9 @@ class BuscarGruposMainFragment : Fragment() {
 
     private lateinit var binding: FragmentBuscarGruposMainBinding
 
-    private var userRepo: UserRepository = UserRepository()
-    private var groupRepo: GroupRepository = GroupRepository()
-    private var listaGrupos:List<Grupo> = mutableListOf()
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+            ;
+    private var listaGrupos: List<Grupo> = mutableListOf()
+    private val viewModel: BuscarGruposFragmentViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,20 +43,37 @@ class BuscarGruposMainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        generarRecyclerFiltrado()
+        //generarRecyclerFiltrado()
 
-        binding.mbtgFilters.addOnButtonCheckedListener { group, checkedId, isChecked ->
+        binding.recyclerFilteredGroups.layoutManager = GridLayoutManager(requireContext(), 2)
+        val adapter = FilteredGroupAdapter(findNavController(), emptyList()) { grupo ->
+            viewModel.unirUsuarioAGrupo(grupo)
+            Toast.makeText(requireContext(), "Unido al ${grupo.titulo}", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.recyclerFilteredGroups.adapter = adapter
+
+        // Observar cambios en los grupos
+        viewModel.groupsList.observe(viewLifecycleOwner, Observer { grupos ->
+            adapter.updateList(grupos)
+        })
+
+
+
+        viewModel.fetchGroups(requireContext())
+
+        binding.mbtgFilters.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if (isChecked) {
-                // Filtramos la lista según el botón seleccionado
                 when (checkedId) {
-                    R.id.btnSuggested -> filtrarGrupos("sugeridos")
-                    R.id.btnAll -> filtrarGrupos("todos")
-                    R.id.btnJoined -> filtrarGrupos("ya_unido")
+                    R.id.btnSuggested -> viewModel.changeFilter("sugeridos")
+                    R.id.btnAll -> viewModel.changeFilter("todos")
+                    R.id.btnJoined -> viewModel.changeFilter("ya_unido")
                 }
             }
         }
     }
-
+}
+/**
     private fun generarRecyclerFiltrado() {
 
         lifecycleScope.launch(Dispatchers.IO) {
@@ -132,4 +147,4 @@ class BuscarGruposMainFragment : Fragment() {
         }
         return returnList
     }
-}
+}*/
