@@ -11,10 +11,12 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.meet_ill.viewmodels.LoginViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 
@@ -27,6 +29,8 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var launcher : ActivityResultLauncher<Intent>
 
+    private val viewModel: LoginViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -37,10 +41,24 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
         initVars()
+        observe()
         comprobarUsuarioLogeado()
     }
 
+    private fun observe(){
+
+        viewModel.loginResult.observe(this){result->
+            if(result){
+                showHome(emailEditText.text.toString())
+            }
+            else{
+                showAlert()
+            }
+        }
+    }
+
     private fun comprobarUsuarioLogeado() {
+
         val currentUser = FirebaseAuth.getInstance().currentUser
         if(currentUser != null){
             showHome(currentUser.email.toString())
@@ -69,19 +87,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         logInButton.setOnClickListener{
-            if(emailEditText.text!!.isNotEmpty() && passwordEditText.text!!.isNotEmpty()){//Como es asincrono el createUser le ponemos una funcion callback que es el listener
-                FirebaseAuth.getInstance()
-                    .signInWithEmailAndPassword(
-                        emailEditText.text.toString()
-                        ,passwordEditText.text.toString())
-                    .addOnCompleteListener{//El parametro que nos llega se llama it (this de los lambdas), podemo poner otro nombre con result -> como normal vaya
-                        if(it.isSuccessful){
-                            showHome(emailEditText.text.toString())
-                        }else{
-                            showAlert()
-                        }
-                    }
-            }
+            viewModel.login(emailEditText.text.toString(),passwordEditText.text.toString())
         }
     }
 
