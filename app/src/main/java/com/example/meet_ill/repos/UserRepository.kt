@@ -41,6 +41,29 @@ class UserRepository {
             null
         }
     }
+    suspend fun getAllUsers(): List<User> {
+        return try {
+            db.get().await().documents.mapNotNull { document ->
+                if (document.exists()) {
+                    User(
+                        idUsuario = document.id,
+                        nombreUsuario = document.getString("apodo") ?: "",
+                        nombreReal = document.getString("name") ?: "",
+                        correo = document.getString("email") ?: "",
+                        patologias = (document.get("patologias") as? List<String>)?.toMutableList() ?: mutableListOf(),
+                        grupsIds = (document.get("groupsIds") as? List<String>)?.toMutableList() ?: mutableListOf(),
+                        imagenPerfil = document.getString("imagenPerfil") ?: "",
+                        tipoUsuarioStr = document.getString("user-type") ?: "user" // Predeterminado a "user"
+                    )
+                } else {
+                    null
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("Repos", "Error al obtener todos los usuarios", e)
+            emptyList()
+        }
+    }
 
     suspend fun unirGrupo(idUsuario: String, idGrupo: String) {
         try {
