@@ -8,11 +8,14 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.example.meet_ill.viewmodels.LoginViewModel
+import com.example.meet_ill.viewmodels.SignUpViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -31,6 +34,8 @@ class SignupActivity : AppCompatActivity() {
     private lateinit var imageIcon: ImageView
     private lateinit var backButton: Button
 
+    private val viewModel: SignUpViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -42,6 +47,16 @@ class SignupActivity : AppCompatActivity() {
         }
 
         initVars()
+        observe()
+    }
+
+    private fun observe(){
+        viewModel.signUpResult.observe(this){result->
+            if(result)
+                showHome(emailEditText.text.toString())
+            else
+                showAlert()
+        }
     }
 
 
@@ -68,22 +83,8 @@ class SignupActivity : AppCompatActivity() {
 
 
         signUpButton.setOnClickListener{
-            if(emailEditText.text!!.isNotEmpty()  && passwordEditText.text!!.isNotEmpty()
-                && nicknameEditText.text!!.isNotEmpty() && nameEditText.text!!.isNotEmpty()){//Como es asincrono el createUser le ponemos una funcion callback que es el listener
-                FirebaseAuth.getInstance()
-                            .createUserWithEmailAndPassword(
-                            emailEditText.text.toString()
-                            ,passwordEditText.text.toString())
-                        .addOnCompleteListener{//El parametro que nos llega se llama it (this de los lambdas), podemo poner otro nombre con result -> como normal vaya
-            if(it.isSuccessful){
-            showHome(emailEditText.text.toString())
-             añadirUsuario()
-            }
-            else{
-                showAlert()
-                }
-            }
-            }
+            viewModel.signUp(emailEditText.text.toString(),nicknameEditText.text.toString(),
+                nameEditText.text.toString(),passwordEditText.text.toString())
         }
 
     }
@@ -105,21 +106,5 @@ class SignupActivity : AppCompatActivity() {
         dialog.show()
 
     }
-    //Función para añadir al usuario también a la bd
-    private fun añadirUsuario(){
-        val user = FirebaseAuth.getInstance().currentUser
-        val userId = user?.uid
-        lifecycleScope.launch(Dispatchers.IO) {
-            val db = FirebaseFirestore.getInstance()
-            db.collection("users").document(userId!!).set(
-                hashMapOf(
-                    "apodo" to nicknameEditText.text.toString(),
-                    "email" to emailEditText.text.toString(),
-                    "name" to nameEditText.text.toString(),
-                    "user-type" to "user",
-                    "groupsIds" to mutableListOf<String>()
-                )
-            )
-        }
-    }
+
 }
