@@ -11,6 +11,8 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -20,7 +22,11 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.example.meet_ill.model.ProfileEditViewModel
+import com.example.meet_ill.model.ProfileViewModel
+import com.example.meet_ill.model.ViewModelFactory
 import com.example.meet_ill.repos.UserRepository
 import com.google.firebase.storage.FirebaseStorage
 import de.hdodenhof.circleimageview.CircleImageView
@@ -41,15 +47,11 @@ class ProfileEditActivity : AppCompatActivity() {
     private lateinit var spinnersContainer: LinearLayout
     private val spinnerList = mutableListOf<Spinner>()
 
-    private val userRepository = UserRepository()
-    private lateinit var currentUserId: String
-
-    private var imagenPerfilBase64: String? = null // Variable para almacenar la imagen seleccionada en Base64
+    private lateinit var viewModel: ProfileEditViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_edit)
-
 
         imgProfile = findViewById(R.id.imgProfile)
         etUsername = findViewById(R.id.etUsername)
@@ -59,117 +61,100 @@ class ProfileEditActivity : AppCompatActivity() {
         btnAddSpinner = findViewById(R.id.btnAddSpinner)
         btnRemoveSpinner = findViewById(R.id.btnRemoveSpinner)
 
-        currentUserId = userRepository.getCurrentUserId() ?: ""
 
+
+        val userRepository = UserRepository()
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelFactory(userRepository)
+        )[ProfileEditViewModel::class.java]
+
+        observeViewModel()
+        rellenaHints()
+
+        //Botones para añadir y quitar patologias
         btnAddSpinner.setOnClickListener {
             if (spinnerList.size < 5) {
                 val newSpinner = createSpinner()
                 spinnerList.add(newSpinner)
                 spinnersContainer.addView(newSpinner)
             }
+            cargaListeners()
         }
-
-
         btnRemoveSpinner.setOnClickListener {
-            if (spinnerList.size > 0) {
+            if (spinnerList.isNotEmpty()) {
                 val lastSpinner = spinnerList.removeAt(spinnerList.size - 1)
                 spinnersContainer.removeView(lastSpinner)
+                viewModel.borrarPatologia()
             }
+            cargaListeners()
         }
-
         imgProfile.setOnClickListener {
             seleccionarImagen()
         }
-
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
         btnBack.setOnClickListener {
             finish() // Finaliza esta actividad y regresa a la anterior.
         }
 
-        rellenaHints()
-        cargarImagen()
-        btnSave.setOnClickListener { guardarCambios() }
+        btnSave.setOnClickListener {
+            viewModel.setUsername(etUsername.text.toString())
+            viewModel.setRealName(etRealName.text.toString())
+            viewModel.updateProfile(viewModel.userId)
+        }
+
+
+
+        viewModel.loadUserData(viewModel.userId)
     }
 
-    //TODO Copiar esto para convertir las imagenes y cargarlas
-    private fun cargarImagen() {
-        lifecycleScope.launch {
-            try {
-                val bitmap = userRepository.obtenerImgUserEnSesion()
-                if (bitmap != null) {
-                    imgProfile.setImageBitmap(bitmap)
-                } else {
-                    imgProfile.setImageResource(R.drawable.default_profile_image) // Imagen predeterminada si no hay imagen
+    private fun cargaListeners() {
+        spinnerList.forEach { spinner ->
+            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                private var isFirstSelection = true
+                override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                    // Ignorar la primera selección inicial
+                    if (isFirstSelection) {
+                        isFirstSelection = false
+                        return
+                    }
+                    val patologias = spinnerList.map { it.selectedItem.toString() }
+                    viewModel.setSelectedPathologies(patologias)
                 }
-            } catch (e: Exception) {
-                Log.e("cargarImagen", "Error al cargar la imagen del usuario", e)
-                imgProfile.setImageResource(R.drawable.default_profile_image) // Imagen predeterminada en caso de error
+                override fun onNothingSelected(parent: AdapterView<*>) {}
             }
         }
     }
 
-
-    private fun guardarCambios() {
-        //Lo pongo por si modificamos unos campos y otros no
-        val updates = mutableMapOf<String, Any>()
-
-        val username = etUsername.text.toString()
-        if (username.isNotEmpty()) updates["apodo"] = username
-
-        val realName = etRealName.text.toString()
-        if (realName.isNotEmpty()) updates["name"] = realName
-
-        val patologiasSeleccionadas = spinnerList.map { it.selectedItem.toString() }
-
-        if (patologiasSeleccionadas.size != patologiasSeleccionadas.distinct().size) {
-            Toast.makeText(this, "Las patologías no pueden repetirse", Toast.LENGTH_SHORT).show()
-            return
+    private fun observeViewModel() {
+        viewModel.username.observe(this) { username -> etUsername.setText(username.toString()) }
+        viewModel.realName.observe(this) { realname -> etRealName.setText(realname.toString()) }
+        viewModel.profileImageBase64.observe(this) { base64 ->
+            if (base64 != null) {
+                imgProfile.setImageBitmap(convertBase64ToBitmap(base64))
+            } else {
+                imgProfile.setImageResource(R.drawable.default_profile_image)
+            }
         }
-        if (patologiasSeleccionadas.isNotEmpty()) updates["patologias"] = patologiasSeleccionadas
-        if (!imagenPerfilBase64.isNullOrEmpty()) {
-            updates["imagenPerfil"] = imagenPerfilBase64!!
+        viewModel.errorMessage.observe(this) { message ->
+            message?.let {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+                viewModel.clearError()
+            }
         }
-        if (updates.isEmpty()) {
-            Toast.makeText(this, "No hay cambios para guardar", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        userRepository.updateUser(currentUserId, updates,
-            onSuccess = {
-                Toast.makeText(this, "Perfil actualizado con éxito", Toast.LENGTH_SHORT).show()
+        viewModel.isProfileUpdated.observe(this) { isUpdated ->
+            if (isUpdated) {
                 val intent = Intent(this, ProfileActivity::class.java)
                 startActivity(intent)
-            },
-            onFailure = {
-                Toast.makeText(this, "Error al actualizar el perfil", Toast.LENGTH_SHORT).show()
             }
-        )
-
+        }
     }
 
     private fun createSpinner(): Spinner {
         val patologias = listOf(
-            "Diabetes",
-            "VIH",
-            "Hipertensión",
-            "Asma",
-            "Artritis",
-            "Epilepsia",
-            "Alzheimer",
-            "Parkinson",
-            "Esclerosis múltiple",
-            "Cáncer",
-            "Enfermedad cardíaca",
-            "EPOC",
-            "Insuficiencia renal",
-            "Fibromialgia",
-            "Lupus",
-            "Anemia",
-            "Migraña",
-            "Obesidad",
-            "Hipotiroidismo",
-            "Alergias"
-        )
+            "","Diabetes", "VIH", "Hipertensión", "Asma", "Artritis", "Epilepsia", "Alzheimer", "Parkinson",
+            "Esclerosis múltiple", "Cáncer", "Enfermedad cardíaca", "EPOC", "Insuficiencia renal", "Fibromialgia",
+            "Lupus", "Anemia", "Migraña", "Obesidad", "Hipotiroidismo", "Alergias")
         val spinner = Spinner(this)
 
         val adapter =
@@ -197,36 +182,31 @@ class ProfileEditActivity : AppCompatActivity() {
                     return view
                 }
             }
-
         spinner.adapter = adapter
-
         return spinner
     }
 
     private fun rellenaHints() {
+        viewModel.selectedPathologies.observe(this) { pathologies ->
+            spinnersContainer.removeAllViews()
+            spinnerList.clear()
 
-        lifecycleScope.launch() {
-            val user = userRepository.getUserById(currentUserId)
-            if (user != null) {
-                etUsername.hint = user.nombreUsuario
-                etRealName.hint = user.nombreReal
+            pathologies.forEach {
+                val spinner = createSpinner()
+                spinnerList.add(spinner)
+                spinnersContainer.addView(spinner)
+            }
 
-                user.patologias.forEach {
-                    val spinner = createSpinner()
-                    spinnerList.add(spinner)
-                    spinnersContainer.addView(spinner)
-                }
-                for (i in 0 until  user.patologias.size) {
-                    if (i < spinnerList.size) {
-                        val spinner = spinnerList[i]
-                        val adapter = spinner.adapter as ArrayAdapter<String>
-                        val position = adapter.getPosition(user.patologias[i])
-                        spinner.setSelection(position)
-                    }
+            for (i in pathologies.indices) {
+                if (i < spinnerList.size) {
+                    val spinner = spinnerList[i]
+                    val adapter = spinner.adapter as ArrayAdapter<String>
+                    val position = adapter.getPosition(pathologies[i])
+                    spinner.setSelection(position)
                 }
             }
+            cargaListeners()
         }
-
     }
 
 
@@ -236,22 +216,14 @@ class ProfileEditActivity : AppCompatActivity() {
         intent.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(intent, 100) // Llamamos al selector de imágenes
     }
-
-    // Cuando se sale de la actividad de selección de imagen
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
             val imageUri: Uri = data.data!!
-
             try {
-                // Convertir la URI de la imagen a un Bitmap
                 val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
-
-                // Convertir el Bitmap a Base64
-                imagenPerfilBase64 = convertirBitmapABase64(bitmap)
-
-                // Mostrar la imagen seleccionada en el ImageView
+                val imagenPerfilBase64 = convertirBitmapABase64(bitmap)
+                viewModel.setProfileImageBase64(imagenPerfilBase64)
                 imgProfile.setImageBitmap(bitmap)
 
             } catch (e: IOException) {
@@ -260,23 +232,16 @@ class ProfileEditActivity : AppCompatActivity() {
         }
     }
 
-    // Método para convertir un Bitmap a Base64
     private fun convertirBitmapABase64(bitmap: Bitmap): String {
         val byteArrayOutputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
         val byteArray = byteArrayOutputStream.toByteArray()
         return Base64.encodeToString(byteArray, Base64.NO_WRAP)
     }
-
-    private fun cargarImagenBase64(base64String: String, imageView: CircleImageView) {
-        try {
-            val decodedBytes = Base64.decode(base64String, Base64.NO_WRAP)
-            val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-            imageView.setImageBitmap(bitmap)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            imageView.setImageResource(R.drawable.default_profile_image)
-        }
+    private fun convertBase64ToBitmap(base64: String): Bitmap {
+        val decodedBytes = Base64.decode(base64, Base64.DEFAULT)
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
     }
+
 
 }
