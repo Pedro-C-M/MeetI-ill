@@ -8,6 +8,7 @@ import com.example.meet_ill.R
 import com.example.meet_ill.data_classes.User
 import com.example.meet_ill.util.AuthSingleton.auth
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
@@ -16,7 +17,7 @@ import kotlinx.coroutines.tasks.await
 class UserRepository {
 
     private val db = Firebase.firestore.collection("users")
-
+    private val auth = FirebaseAuth.getInstance()
 
     suspend fun getUserById(userId : String):User?{
         return try {
@@ -56,10 +57,7 @@ class UserRepository {
             .addOnFailureListener { onFailure(it) }
     }
 
-    // Obtener el usuario actual autenticado
-    fun getCurrentUserId(): String? {
-        return auth.currentUser?.uid
-    }
+    fun getCurrentUserId(): String? = auth.currentUser?.uid
 
     suspend fun obtenerImgUserEnSesion(): Bitmap? {
         return try {
