@@ -23,7 +23,6 @@
         android:layout_height="wrap_content"
         android:text="User name"
         android:textSize="18sp"
-        android:textColor="#000000"
         android:fontFamily="sans-serif-condensed-medium"
         app:layout_constraintStart_toEndOf="@+id/recentChatImageView"
         app:layout_constraintTop_toTopOf="@+id/recentChatImageView"
@@ -36,7 +35,6 @@
         android:layout_height="wrap_content"
         android:text="18:00"
         android:textStyle="bold"
-        android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/recentChatImageView"
         android:layout_marginEnd="8dp" />
@@ -47,7 +45,6 @@
         android:layout_height="wrap_content"
         android:text="Last Message"
         android:textSize="16sp"
-        android:textColor="#000000"
         app:layout_constraintStart_toEndOf="@+id/recentChatImageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recentChatTextName"
