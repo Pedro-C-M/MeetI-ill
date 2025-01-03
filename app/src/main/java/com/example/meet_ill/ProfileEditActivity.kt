@@ -92,7 +92,7 @@ class ProfileEditActivity : AppCompatActivity() {
         imgProfile.setOnClickListener {
             seleccionarImagen()
         }
-        val btnBack = findViewById<ImageButton>(R.id.btnBack)
+        val btnBack = findViewById<Button>(R.id.backButton)
         btnBack.setOnClickListener {
             finish() // Finaliza esta actividad y regresa a la anterior.
         }

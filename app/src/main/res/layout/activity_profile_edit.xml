@@ -3,80 +3,76 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <!-- Cabecera -->
-    <LinearLayout
-        android:id="@+id/headerLayout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#F2E6F4">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cLInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:padding="1dp"
-        android:backgroundTint="@color/cardview_dark_background"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/imgProfileContainer"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Botón atrás -->
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="-5dp"
-            android:layout_marginLeft="-15dp"
-            android:src="@android:drawable/ic_menu_revert"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Atrás" />
+        <Button
+            android:id="@+id/backButton"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:backgroundTint="#F8DAF8"
+            android:textColorLink="#FFFFFF"
+            app:icon="?attr/homeAsUpIndicator"
+            app:iconTint="@android:color/black" />
 
-        <!-- Título -->
         <TextView
             android:id="@+id/tvTitle"
-            android:layout_width="164dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="180dp"
-            android:layout_marginLeft="-35dp"
-            android:layout_marginTop="5dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Editar Perfil"
-            android:textColor="@android:color/black"
-            android:textSize="28sp" />
-    </LinearLayout>
+            android:text="Editar perfil"
+            android:textSize="28sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <View
         android:id="@+id/headerSeparator"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"
-        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintTop_toBottomOf="@id/cLInfo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
     <!-- Contenedor de la imagen de perfil y el icono de editar -->
     <FrameLayout
         android:id="@+id/imgProfileContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_width="174dp"
+        android:layout_height="174dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/headerSeparator"
+        android:layout_gravity="center">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imgProfile"
-            android:layout_width="174dp"
-            android:layout_height="174dp"
-            android:layout_marginTop="65dp"
-            android:scaleType="centerCrop" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center"
+            app:shapeAppearanceOverlay="@style/RoundedCornersImageView"
+            />
 
-        <ImageView
-            android:id="@+id/btnEditImage"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:layout_marginTop="65dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="4dp"
-            android:src="@drawable/ic_edit"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+
     </FrameLayout>
 
     <!-- Nombre de usuario -->
@@ -162,3 +158,4 @@
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

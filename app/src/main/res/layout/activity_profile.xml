@@ -2,66 +2,73 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#F2E6F4">
 
-    <!-- Cabecera -->
-    <LinearLayout
-        android:id="@+id/headerLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cLInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:padding="1dp"
-        android:backgroundTint="@color/cardview_dark_background"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/linearLayoutUsernameEdit"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Botón atrás -->
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="-5dp"
-            android:layout_marginLeft="-15dp"
-            android:src="@android:drawable/ic_menu_revert"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Atrás" />
 
-        <!-- Título -->
+        <Button
+            android:id="@+id/backButton"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:backgroundTint="#F8DAF8"
+            android:textColorLink="#FFFFFF"
+            app:icon="?attr/homeAsUpIndicator"
+            app:iconTint="@android:color/black"/>
+
+
         <TextView
             android:id="@+id/tvTitle"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="Perfil"
-            android:layout_marginRight="220dp"
-            android:layout_marginLeft="-75dp"
-            android:layout_marginTop="5dp"
-            android:textColor="@android:color/black"
             android:textSize="28sp"
-            android:gravity="center" />
-    </LinearLayout>
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <View
         android:id="@+id/headerSeparator"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"
-        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintTop_toBottomOf="@id/cLInfo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Foto de perfil -->
-    <ImageView
+
+
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/imgProfile"
-        android:layout_width="133dp"
+        android:layout_width="160dp"
         android:layout_height="0dp"
         android:scaleType="centerCrop"
         android:layout_marginTop="10dp"
         app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/headerLayout"
-        android:layout_marginEnd="16dp" />
+        app:layout_constraintTop_toBottomOf="@id/cLInfo"
+        app:shapeAppearanceOverlay="@style/CircleImageView"
+        />
 
     <!-- Nombre de usuario y botón editar -->
     <LinearLayout
@@ -89,10 +96,10 @@
         <!-- Botón de editar -->
         <Button
             android:id="@+id/btnEditUser"
-            android:layout_width="220dp"
-            android:layout_height="wrap_content"
-            android:text="Editar Usuario"
-            android:layout_marginTop="25dp" />
+            android:layout_width="208dp"
+            android:layout_height="37dp"
+            android:layout_marginTop="25dp"
+            android:text="Editar Usuario" />
     </LinearLayout>
 
     <!-- Nombre real -->
@@ -103,7 +110,7 @@
         android:text="Nombre real: Juan Pérez"
         android:textSize="20sp"
         app:layout_constraintTop_toBottomOf="@id/linearLayoutUsernameEdit"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="45dp"
         android:layout_marginBottom="16dp" />
 
     <!-- Correo -->

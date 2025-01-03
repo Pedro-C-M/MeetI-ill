@@ -65,7 +65,7 @@ class ProfileActivity : AppCompatActivity() {
             finish()
         }
 
-        val btnBack = findViewById<ImageButton>(R.id.btnBack)
+        val btnBack = findViewById<Button>(R.id.backButton)
         btnBack.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
