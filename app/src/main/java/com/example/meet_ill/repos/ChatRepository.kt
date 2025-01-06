@@ -7,13 +7,20 @@ import com.example.meet_ill.data_classes.User
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class ChatRepository {
 
@@ -29,18 +36,37 @@ class ChatRepository {
             for (user in users) {
                 val chatId = getChatId(user.idUsuario, userId)
                 if (chatId != null) {
-                    // Obtener los mensajes del chat
-                    val mensajes = getMessageById(chatId)
-                    if (mensajes != null && mensajes.isNotEmpty()) {
+                    // Obtener la referencia de la base de datos de mensajes
+                    val database = FirebaseDatabase.getInstance("https://meet-ill-default-rtdb.europe-west1.firebasedatabase.app")
+                    val messagesRef = database.getReference("chats").child(chatId).child("messages")
+
+                    // Leer los mensajes de la base de datos una sola vez
+                    val mensajesSnapshot = messagesRef.get().await()
+
+                    val mensajes = mutableListOf<Pair<String, String>>()
+                    for (snapshot in mensajesSnapshot.children) {
+                        // Convertir el snapshot en un Map para acceder a los valores
+                        val data = snapshot.value as? Map<*, *>
+
+                        val content = data?.get("text")?.toString() ?: ""
+                        val fecha = data?.get("timeSent")?.toString() ?: ""
+                        // Formatear la fecha
+                        val formattedFecha = formatFecha(fecha)
+
+                        // Agregar una dupla (content, fecha) a la lista
+                        mensajes.add(Pair(content, formattedFecha))
+                    }
+
+                    if (mensajes.isNotEmpty()) {
                         val ultimoMensaje = mensajes.last()
                         chats.add(
                             ChatRecientes(
                                 idChat = chatId,
                                 nombre = user.nombreUsuario,
-                                idUsuario= user.idUsuario,
+                                idUsuario = user.idUsuario,
                                 imagenPerfil = user.imagenPerfil,
-                                ultimoMensaje = ultimoMensaje.content,
-                                horaUltimoMensaje = ultimoMensaje.fecha
+                                ultimoMensaje = ultimoMensaje.first, // 'first' es el content
+                                horaUltimoMensaje = ultimoMensaje.second // 'second' es la fecha
                             )
                         )
                     }
@@ -52,6 +78,25 @@ class ChatRepository {
         return chats.sortedByDescending { it.horaUltimoMensaje }
     }
 
+    fun formatFecha(fecha: String): String {
+        return try {
+            // Convertir la fecha de String a Long (timestamp en segundos)
+            val timestamp = fecha.toLongOrNull()
+
+            if (timestamp != null) {
+                // Convertir el timestamp de segundos a milisegundos (multiplicamos por 1000)
+                val date = Date(timestamp * 1000)
+
+                // Usar SimpleDateFormat para formatear la fecha
+                val dateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+                dateFormat.format(date)
+            } else {
+                fecha // Si no se puede convertir, devolver el valor original
+            }
+        } catch (e: Exception) {
+            fecha // En caso de error, devolver la fecha original
+        }
+    }
     suspend fun getChatId(otroUsuario: String, usuarioId: String): String? {
         var chatId:String = ""
 

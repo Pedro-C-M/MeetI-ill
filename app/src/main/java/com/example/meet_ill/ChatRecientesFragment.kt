@@ -51,7 +51,6 @@ class ChatRecientesFragment : Fragment() {
         // Configurar un listener opcional en el adaptador
         adapter.setOnChatClickListener(object : onChatClicked {
             override fun getOnChatCLickedItem(position: Int, chatList: ChatRecientes) {
-                Toast.makeText(requireContext(), "Cargando chat con ${chatList.nombre}...", Toast.LENGTH_SHORT).show()
 
                 // Obtener el usuario desde el repositorio
                 lifecycleScope.launch {
@@ -60,7 +59,7 @@ class ChatRecientesFragment : Fragment() {
                     if (user != null) {
                         // Crear un Intent para iniciar la actividad de chat privado
                         val intent = Intent(requireContext(), PrivateChatActivity::class.java)
-                        intent.putExtra("user", user)
+                        intent.putExtra("user", user.idUsuario)
 
                         // Iniciar la actividad
                         startActivity(intent)

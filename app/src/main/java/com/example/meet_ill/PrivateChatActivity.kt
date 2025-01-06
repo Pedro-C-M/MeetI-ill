@@ -2,7 +2,9 @@ package com.example.meet_ill
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -95,9 +97,13 @@ class PrivateChatActivity : AppCompatActivity() {
             // Actualizar la UI con los mensajes
             withContext(Dispatchers.Main) {
 
+
+
                 binding.tVContactName.text = usuario!!.nombreUsuario
 
-                binding.iVContactImage.load(usuario!!.imagenPerfil)
+                //binding.iVContactImage.load(usuario!!.imagenPerfil)
+
+                cargarImagen(usuario!!.imagenPerfil)
 
                 lifecycleScope.launch(Dispatchers.IO) {
                     var user: User? =
@@ -238,6 +244,21 @@ class PrivateChatActivity : AppCompatActivity() {
 
     }
 
+    private fun cargarImagen(imagenPerfil: String) {
+        try {
+            if (!imagenPerfil.isEmpty()) {
+                val decodedBytes = Base64.decode(imagenPerfil, Base64.NO_WRAP)
+                val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+                binding.iVContactImage.setImageBitmap(bitmap)
+            }else{
+                binding.iVContactImage.setImageResource(R.drawable.default_profile_image)
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            binding.iVContactImage.setImageResource(R.drawable.default_profile_image)
+        }
+    }
 
     private suspend fun cargarMensaje(child: DataSnapshot?): Any {
 
