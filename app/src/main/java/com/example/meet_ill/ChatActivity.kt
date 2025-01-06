@@ -80,8 +80,7 @@ class ChatActivity : AppCompatActivity() {
         iVContactImage.load(grupo.urlImagen)
 
         launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ resultado ->
-            var devuelto = resultado.data?.getStringExtra("despido")
-            Toast.makeText(this, devuelto, Toast.LENGTH_LONG).show()
+
         }
 
         onStart()

@@ -235,7 +235,7 @@ class PrivateChatActivity : AppCompatActivity() {
         lateinit var message: Message
         lateinit var usuario: User
         val data = child?.value as? Map<*, *>
-
+        val id = child?.key.toString()
         val content = data?.get("text").toString()
         val sender = data?.get("sender").toString()
         val fecha = data?.get("timeSent").toString()
@@ -244,12 +244,12 @@ class PrivateChatActivity : AppCompatActivity() {
         // Crear una instancia de Date con el timestamp
 
         if (sender.equals(FirebaseAuth.getInstance().currentUser?.uid.toString())) {
-            message = Message(content, false, "", fecha, "", message.messageId)
+            message = Message(content, false, "", fecha, "", id)
         } else {
             usuario = withContext(Dispatchers.IO) {
                 userRepo.getUserById(sender)!!
             }
-            message = Message(content, true, usuario.nombreUsuario, fecha, "",message.messageId)
+            message = Message(content, true, usuario.nombreUsuario, fecha, "",id)
         }
 
 
