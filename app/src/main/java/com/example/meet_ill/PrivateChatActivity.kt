@@ -37,7 +37,7 @@ import java.util.Locale
 class PrivateChatActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityChatBinding
-    private lateinit var otroUsuario: User
+    private lateinit var otroUsuario: String
     private lateinit var usuarioId: String
     private lateinit var launcher: ActivityResultLauncher<Intent>
     private var chatRepo: ChatRepository = ChatRepository()
@@ -66,13 +66,13 @@ class PrivateChatActivity : AppCompatActivity() {
 
     private fun initVars() {
 
-        otroUsuario = intent.getParcelableExtra("user")!!
+        otroUsuario = intent.getStringExtra("user")!!
 
         usuarioId = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
-        binding.tVContactName.text = otroUsuario.nombreUsuario
+        //binding.tVContactName.text = otroUsuario.nombreUsuario
 
-        binding.iVContactImage.load(otroUsuario.imagenPerfil)
+        //binding.iVContactImage.load(otroUsuario.imagenPerfil)
 
         launcher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { resultado ->
@@ -84,11 +84,20 @@ class PrivateChatActivity : AppCompatActivity() {
         var context: Context = this
 
         lifecycleScope.launch(Dispatchers.IO) {
+
+            var usuario = userRepo.getUserById(otroUsuario)
+
+
+
             chatId = chatRepo.getChatId(otroUsuario, usuarioId)!!
 
 
             // Actualizar la UI con los mensajes
             withContext(Dispatchers.Main) {
+
+                binding.tVContactName.text = usuario!!.nombreUsuario
+
+                binding.iVContactImage.load(usuario!!.imagenPerfil)
 
                 lifecycleScope.launch(Dispatchers.IO) {
                     var user: User? =

@@ -27,7 +27,7 @@ class ChatRepository {
             val users=UserRepository.getAllUsers()
 
             for (user in users) {
-                val chatId = getChatId(user, userId)
+                val chatId = getChatId(user.idUsuario, userId)
                 if (chatId != null) {
                     // Obtener los mensajes del chat
                     val mensajes = getMessageById(chatId)
@@ -52,10 +52,10 @@ class ChatRepository {
         return chats.sortedByDescending { it.horaUltimoMensaje }
     }
 
-    suspend fun getChatId(otroUsuario: User, usuarioId: String): String? {
+    suspend fun getChatId(otroUsuario: String, usuarioId: String): String? {
         var chatId:String = ""
 
-        val participantes = listOf(otroUsuario.idUsuario,usuarioId)
+        val participantes = listOf(otroUsuario,usuarioId)
         val ordenados = participantes.sorted()
         try{
             val document = db.whereEqualTo("participantes", ordenados)

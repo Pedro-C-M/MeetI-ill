@@ -123,7 +123,9 @@ class GroupInfoActivity : AppCompatActivity() {
 
                 recyclerParticipantes.adapter = ParticipantesAdapter(listaParticipantes, coroutineScope = lifecycleScope , user!!.tipoUsuario, grupo.idGrupo, context){ participante ->
                     val intent = Intent(applicationContext, PrivateChatActivity::class.java)
-                    intent.putExtra("user", participante)
+                    val id = participante!!.idUsuario
+                    intent.putExtra("user", id)
+
                     launcher.launch(intent)
                     finish()
                 }
