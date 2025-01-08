@@ -1,7 +1,5 @@
 package com.example.meet_ill
 
-import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -10,27 +8,20 @@ import android.widget.ImageView
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Base64
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import com.example.meet_ill.model.ProfileEditViewModel
-import com.example.meet_ill.model.ProfileViewModel
-import com.example.meet_ill.model.ViewModelFactory
+import com.example.meet_ill.viewmodels.ProfileEditViewModel
+import com.example.meet_ill.viewmodels.ViewModelFactory
 import com.example.meet_ill.repos.UserRepository
-import com.google.firebase.storage.FirebaseStorage
-import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
@@ -130,7 +121,7 @@ class ProfileEditActivity : AppCompatActivity() {
         viewModel.username.observe(this) { username -> etUsername.setText(username.toString()) }
         viewModel.realName.observe(this) { realname -> etRealName.setText(realname.toString()) }
         viewModel.profileImageBase64.observe(this) { base64 ->
-            if (base64 != null) {
+            if (base64 != null && base64.isNotEmpty()) {
                 imgProfile.setImageBitmap(convertBase64ToBitmap(base64))
             } else {
                 imgProfile.setImageResource(R.drawable.default_profile_image)

@@ -1,4 +1,4 @@
-package com.example.meet_ill.model
+package com.example.meet_ill.viewmodels
 
 
 import androidx.lifecycle.LiveData

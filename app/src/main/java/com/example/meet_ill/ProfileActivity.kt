@@ -7,13 +7,12 @@ import android.os.Bundle
 import android.util.Base64
 import android.widget.TextView
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.example.meet_ill.model.ProfileViewModel
-import com.example.meet_ill.model.ViewModelFactory
+import com.example.meet_ill.viewmodels.ProfileViewModel
+import com.example.meet_ill.viewmodels.ViewModelFactory
 import com.example.meet_ill.repos.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 
@@ -121,9 +120,15 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun cargarImagen(imagenPerfil: String) {
         try {
-            val decodedBytes = Base64.decode(imagenPerfil, Base64.NO_WRAP)
-            val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-            imgProfile.setImageBitmap(bitmap)
+            if (!imagenPerfil.isEmpty()) {
+                val decodedBytes = Base64.decode(imagenPerfil, Base64.NO_WRAP)
+                val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+                imgProfile.setImageBitmap(bitmap)
+            }else{
+                imgProfile.setImageResource(R.drawable.default_profile_image)
+            }
+
+
         } catch (e: Exception) {
             e.printStackTrace()
             imgProfile.setImageResource(R.drawable.default_profile_image)
